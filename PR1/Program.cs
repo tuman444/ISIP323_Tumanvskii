@@ -278,4 +278,28 @@ class Program
         }
     }
 
+    // Метод для поиска трат по названию
+    static void SearchByName(List<Expense> expenses)
+    {
+        Console.Write("\nВведите название для поиска: ");
+        string searchTerm = Console.ReadLine().ToLower(); // Приводим к нижнему регистру для регистронезависимого поиска
+
+        // Ищем все траты, содержащие введенную строку в названии
+        var results = expenses.Where(e => e.Name.ToLower().Contains(searchTerm)).ToList();
+
+        // Проверяем найдены ли результаты
+        if (results.Count == 0)
+        {
+            Console.WriteLine("Ничего не найдено.");
+            return;
+        }
+
+        // Выводим результаты поиска
+        Console.WriteLine($"\n=== РЕЗУЛЬТАТЫ ПОИСКА ({results.Count} найденно) ===");
+        foreach (var result in results)
+        {
+            Console.WriteLine($"{result.Name} - {result.Amount:F2} руб.");
+        }
+    }
 }
+
