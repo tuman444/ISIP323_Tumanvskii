@@ -189,4 +189,25 @@ class Program
         var mostExpensive = expenses.OrderByDescending(e => e.Amount).First();
         Console.WriteLine($"Самая дорогая покупка: {mostExpensive.Name} - {mostExpensive.Amount:F2} руб.");
     }
+
+    // Метод для сортировки трат по цене (пузырьковая сортировка)
+    static void BubbleSortByPrice(ref List<Expense> expenses)
+    {
+        // Внешний цикл - проходим по всем элементам
+        for (int i = 0; i < expenses.Count - 1; i++)
+        {
+            // Внутренний цикл - сравниваем соседние элементы
+            for (int j = 0; j < expenses.Count - i - 1; j++)
+            {
+                // Если текущий элемент больше следующего
+                if (expenses[j].Amount > expenses[j + 1].Amount)
+                {
+                    // Меняем элементы местами
+                    Expense temp = expenses[j];
+                    expenses[j] = expenses[j + 1];
+                    expenses[j + 1] = temp;
+                }
+            }
+        }
+    }
 }
