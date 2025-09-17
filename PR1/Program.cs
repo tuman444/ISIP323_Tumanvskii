@@ -163,4 +163,30 @@ class Program
         }
     }
 
+    // Метод для отображения статистики по тратам
+    static void ShowStatistics(List<Expense> expenses)
+    {
+        // Проверяем есть ли данные для статистики
+        if (expenses.Count == 0)
+        {
+            Console.WriteLine("Нет данных для статистики.");
+            return;
+        }
+
+        // Вычисляем статистические показатели с помощью LINQ
+        decimal total = expenses.Sum(e => e.Amount);        // Общая сумма
+        decimal average = expenses.Average(e => e.Amount);  // Средняя трата
+        decimal max = expenses.Max(e => e.Amount);          // Максимальная трата
+        decimal min = expenses.Min(e => e.Amount);          // Минимальная трата
+
+        Console.WriteLine("\n=== СТАТИСТИКА ===");
+        Console.WriteLine($"Общая сумма: {total:F2} руб.");
+        Console.WriteLine($"Средняя трата: {average:F2} руб.");
+        Console.WriteLine($"Максимальная трата: {max:F2} руб.");
+        Console.WriteLine($"Минимальная трата: {min:F2} руб.");
+
+        // Находим самую дорогую покупку
+        var mostExpensive = expenses.OrderByDescending(e => e.Amount).First();
+        Console.WriteLine($"Самая дорогая покупка: {mostExpensive.Name} - {mostExpensive.Amount:F2} руб.");
+    }
 }
