@@ -94,4 +94,50 @@ class Program
                 }
             }
         }
+        // Основной цикл работы с меню
+        bool exit = false;
+        while (!exit)
+        {
+            // Вывод меню
+            Console.WriteLine("\n=== МЕНЮ ===");
+            Console.WriteLine("1. Вывод данных");
+            Console.WriteLine("2. Статистика");
+            Console.WriteLine("3. Сортировка по цене");
+            Console.WriteLine("4. Конвертация валюты");
+            Console.WriteLine("5. Поиск по названию");
+            Console.WriteLine("0. Выход");
+
+            Console.Write("Выберите пункт меню: ");
+            string choice = Console.ReadLine();
+
+            // Обработка выбора пользователя
+            switch (choice)
+            {
+                case "1":
+                    DisplayData(expenses); // Вывод всех данных
+                    break;
+                case "2":
+                    ShowStatistics(expenses); // Показать статистику
+                    break;
+                case "3":
+                    BubbleSortByPrice(ref expenses); // Сортировать по цене
+                    Console.WriteLine("Данные отсортированы по цене!");
+                    break;
+                case "4":
+                    ConvertCurrency(expenses); // Конвертировать валюту
+                    break;
+                case "5":
+                    SearchByName(expenses); // Поиск по названию
+                    break;
+                case "0":
+                    exit = true; // Выход из программы
+                    Console.WriteLine("Выход из программы...");
+                    break;
+                default:
+                    Console.WriteLine("Неверный выбор! Попробуйте снова.");
+                    break;
+            }
+        }
     }
+
+}
