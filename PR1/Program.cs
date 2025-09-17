@@ -210,4 +210,72 @@ class Program
             }
         }
     }
+
+    // Метод для конвертации сумм в другие валюты
+    static void ConvertCurrency(List<Expense> expenses)
+    {
+        Console.WriteLine("\n=== КОНВЕРТАЦИЯ ВАЛЮТЫ ===");
+        Console.WriteLine("1. Доллар США (USD)");
+        Console.WriteLine("2. Евро (EUR)");
+        Console.WriteLine("3. Фунт стерлингов (GBP)");
+        Console.WriteLine("4. Другая валюта (ввести курс вручную)");
+
+        Console.Write("Выберите валюту: ");
+        string currencyChoice = Console.ReadLine();
+
+        decimal exchangeRate = 0; // Курс обмена
+
+        // Устанавливаем курс в зависимости от выбора пользователя
+        switch (currencyChoice)
+        {
+            case "1":
+                exchangeRate = 90.0m; // Примерный курс USD
+                Console.WriteLine($"Курс доллара: {exchangeRate} руб.");
+                break;
+            case "2":
+                exchangeRate = 98.0m; // Примерный курс EUR
+                Console.WriteLine($"Курс евро: {exchangeRate} руб.");
+                break;
+            case "3":
+                exchangeRate = 115.0m; // Примерный курс GBP
+                Console.WriteLine($"Курс фунта: {exchangeRate} руб.");
+                break;
+            case "4":
+                Console.Write("Введите курс рубля к выбранной валюте: ");
+                // Проверяем корректность ввода курса
+                while (!decimal.TryParse(Console.ReadLine(), out exchangeRate) || exchangeRate <= 0)
+                {
+                    Console.WriteLine("Ошибка! Введите корректный курс:");
+                }
+                break;
+            default:
+                Console.WriteLine("Неверный выбор!");
+                return;
+        }
+
+        // Выводим таблицу с конвертированными суммами
+        Console.WriteLine("\n=== ТРАТЫ В ВЫБРАННОЙ ВАЛЮТЕ ===");
+        Console.WriteLine("Название\t\tСумма (руб)\tСумма в валюте");
+        Console.WriteLine("------------------------------------------------");
+
+        // Проходим по всем тратам и конвертируем суммы
+        foreach (var expense in expenses)
+        {
+            // Вычисляем конвертированную сумму: рубль / курс
+            decimal convertedAmount = expense.Amount / exchangeRate;
+
+            // Определяем символ валюты в зависимости от выбора
+            string currencySymbol = currencyChoice switch
+            {
+                "1" => "USD",
+                "2" => "EUR",
+                "3" => "GBP",
+                _ => "ед." // Для ручного ввода
+            };
+
+            // Выводим информацию о трате в обеих валютах
+            Console.WriteLine($"{expense.Name,-20} {expense.Amount,10:F2} руб.\t{convertedAmount,10:F2} {currencySymbol}");
+        }
+    }
+
 }
