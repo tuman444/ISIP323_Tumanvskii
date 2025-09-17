@@ -140,4 +140,27 @@ class Program
         }
     }
 
+    // Метод для вывода всех трат в табличном формате
+    static void DisplayData(List<Expense> expenses)
+    {
+        // Проверяем есть ли данные для отображения
+        if (expenses.Count == 0)
+        {
+            Console.WriteLine("Нет данных для отображения.");
+            return;
+        }
+
+        Console.WriteLine("\n=== ВАШИ ТРАТЫ ===");
+        Console.WriteLine("№  Название\t\tСумма (руб)");
+        Console.WriteLine("--------------------------------");
+
+        // Выводим каждую трату с номером, названием и суммой
+        for (int i = 0; i < expenses.Count; i++)
+        {
+            // {i + 1} - номер, {expenses[i].Name,-20} - название с выравниванием слева на 20 символов
+            // {expenses[i].Amount,10:F2} - сумма с выравниванием справа на 10 символов и 2 знаками после запятой
+            Console.WriteLine($"{i + 1}. {expenses[i].Name,-20} {expenses[i].Amount,10:F2}");
+        }
+    }
+
 }
