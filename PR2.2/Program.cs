@@ -121,8 +121,14 @@ public class ProductManager // Класс для управления товар
     // Метод для поиска товара по коду
     public Product FindProductByCode(string code)
     {
-        // Возврат товара или null если не найден
-        return products.FirstOrDefault(p => p.Code == code);
+        foreach (var product in products)
+        {
+            if (product.Code == code)
+            {
+                return product;
+            }
+        }
+        return null;
     }
 
     // Метод для добавления поставки товара
@@ -207,7 +213,7 @@ class Program // Главный класс программы
         Console.WriteLine("Нажмите любую клавишу для продолжения...");
         Console.ReadKey(); // Ожидание нажатия клавиши
 
-        DisplayMainMenu(); // Запуск главного меню
+            DisplayMainMenu(); // Запуск главного меню
     }
 
     // Метод для отображения главного меню
