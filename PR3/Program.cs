@@ -190,5 +190,66 @@ class TextAnalyzer
     }
 
 
+    // Поиск самого короткого и самого длинного слова
+    static void FindShortestAndLongestWords(string text, TextStatistics stats)
+    {
+        if (string.IsNullOrEmpty(text))  //проверка на пустую текст
+        {
+            stats.ShortestWord = "";
+            stats.LongestWord = "";
+            return;
+        }
+
+        string shortestWord = null; //корткое слово 
+        string longestWord = null;  //длинное слово
+        StringBuilder currentWord = new StringBuilder(); //накопление текущего слова
+
+        // Проходим по каждому символу текста для выделения слов
+        foreach (char c in text)
+        {
+            if (char.IsLetterOrDigit(c) || c == '\'')
+            {
+                currentWord.Append(c);  // добавляем символ к текущему слову
+            }
+            else  //если символ разделитель
+            {
+                if (currentWord.Length > 0)    //если накопилось слово
+                {
+                    string word = currentWord.ToString();
+
+                    // Проверяем самое короткое слово
+                    if (shortestWord == null || word.Length < shortestWord.Length)
+                    {
+                        shortestWord = word;
+                    }
+
+                    // Проверяем самое длинное слово
+                    if (longestWord == null || word.Length > longestWord.Length)
+                    {
+                        longestWord = word;
+                    }
+
+                    currentWord.Clear();
+                }
+            }
+        }
+
+        // Проверяем последнее слово
+        if (currentWord.Length > 0)
+        {
+            string word = currentWord.ToString();
+            if (shortestWord == null || word.Length < shortestWord.Length)
+            {
+                shortestWord = word;
+            }
+            if (longestWord == null || word.Length > longestWord.Length)
+            {
+                longestWord = word;
+            }
+        }
+
+        stats.ShortestWord = shortestWord ?? "";  //Защита от null значений
+        stats.LongestWord = longestWord ?? "";
+    }   
 
 }
