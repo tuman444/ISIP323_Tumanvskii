@@ -315,6 +315,32 @@ class TextAnalyzer
         stats.ConsonantCount = consonantCount;
     }
 
+    // Анализ частоты встречаемости букв
+    static void AnalyzeLetterFrequency(string text, TextStatistics stats)
+    {
+        Dictionary<char, int> frequency = new Dictionary<char, int>(); //инициализация словаря
+
+        // Проходим по каждому символу текста
+        foreach (char c in text.ToLower()) // Приводим к нижнему регистру
+        {
+            if (char.IsLetter(c)) // Учитываем только буквы
+            {
+                if (frequency.ContainsKey(c)) //если буква есть в словаре
+                {
+                    frequency[c]++;
+                }
+                else   //если буква встречается впервые
+                {
+                    frequency[c] = 1;  //добавляем букву в словарь со счетчиком 1
+                }
+            }
+        }
+
+        stats.LetterFrequency = frequency;  //сохранение результатов
+    }
+
+
+
 
 
 }
