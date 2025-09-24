@@ -1,4 +1,5 @@
 ﻿using Microsoft.VisualBasic;
+using System.Collections.Generic;
 using System.Text;
 
 class TextAnalyzer
@@ -17,13 +18,13 @@ class TextAnalyzer
 
     private static List<TextStatistics> allStatistics = new List<TextStatistics>();
 
-    private static readonly HashSet<char> vowels = new HashSet<char>
+    private static readonly List<char> vowels = new List<char>
     {
-        'а', 'е', 'ё', 'и', 'о', 'и', 'у', 'ы', 'ю', 'э', 'я', 
+        'а', 'е', 'ё', 'и', 'о', 'и', 'у', 'ы', 'ю', 'э', 'я',
         'a', 'e', 'y', 'u', 'i', 'o'
     };
 
-    private static readonly HashSet<char> consonants = new HashSet<char>
+    private static readonly List<char> consonants = new List<char>
     {
         'й', 'ц', 'к', 'н', 'г', 'ш', 'щ', 'з', 'х', 'ф', 'в', 'п', 'р', 'л', 'д', 'ж', 'ч', 'с', 'м', 'т', 'б',
         'q', 'w', 'r', 't', 'p', 's', 'd', 'f', 'g', 'h', 'j', 'k', 'l', 'z', 'x', 'c', 'v', 'b', 'n', 'm'
@@ -33,11 +34,13 @@ class TextAnalyzer
     {
         Console.WriteLine("=== Анализатор текста ===");
 
-        //bool continueWorking = true;
-
         while (true)
         {
-            ShowMainMenu();
+            Console.WriteLine("\n=== Главное меню ===");
+            Console.WriteLine("1. Анализировать текст");
+            Console.WriteLine("2. Показать статистику по прошлым текстам");
+            Console.WriteLine("3. Выйти");
+            Console.WriteLine("Выберите действие");
             string choice = Console.ReadLine(); 
 
             switch(choice)
@@ -46,10 +49,9 @@ class TextAnalyzer
                     AnalyzeNewText();
                     break;
                  case "2":
-                    ShowPreviosStatistics();
+                    ShowPreviousStatistics();
                     break;
                  case "3":
-                    //continueWorking = false;
                     Console.WriteLine("До свидания");
                     break;
                  default:
@@ -85,15 +87,6 @@ class TextAnalyzer
     }
 
 
-    static void ShowMainMenu()
-    {
-        Console.WriteLine("\n=== Главное меню ===");
-        Console.WriteLine("1. Анализировать текст");
-        Console.WriteLine("2. Показать статистику по прошлым текстам");
-        Console.WriteLine("3. Выйти");
-        Console.WriteLine("Выберите действие");
-    }
-
     // Получение текста от пользователя с проверкой длины
     static string GetTextUser()
     {
@@ -116,9 +109,9 @@ class TextAnalyzer
             if (cleanedText.Length < 100)
             {
                 Console.WriteLine($"Текст слишком короткий! Введено {cleanedText.Length} символов. Минимум 100 символов.");
-                Console.Write("Хотите попробовать снова? (д/н): ");
+                Console.Write("Хотите попробовать снова? (да/нет): ");
                 string answer = Console.ReadLine();
-                if (answer?.ToLower() != "д")
+                if (answer?.ToLower() != "да")
                 {
                     return null;
                 }
