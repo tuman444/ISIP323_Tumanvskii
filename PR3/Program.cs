@@ -59,6 +59,33 @@ class TextAnalyzer
         }
     }
 
+    // Анализ нового текста
+    static void AnalyzeNewText()
+    {
+        Console.WriteLine("\n--- Анализ нового текста ---");
+
+        string text = GetTextUser();    // Получение текста от пользователя
+        if (string.IsNullOrEmpty(text)) return;
+
+        TextStatistics stats = new TextStatistics   // Создание объекта для хранения статистики
+        {
+            Text = text.Length > 50 ? text.Substring(0, 47) + "..." : text,
+            AnalysisTime = DateTime.Now
+        };
+
+        // Выполнение всех анализов
+        AnalyzeWordCount(text, stats);                  //подсчитываем кол-во слов
+        FindShortestAndLongestWords(text, stats);       //находим самое короткое и самое длинное слово
+        AnalyzeSentenceCount(text, stats);              //подсчитываем кол-во предложений
+        AnalyzeLetters(text, stats);                    //подсчитываем глассные и согласные буквы
+        AnalyzeLetterFrequency(text, stats);            //создаем статистику частоты букв
+
+        allStatistics.Add(stats);
+
+        DisplayCurrentStatistics(stats);                //вывод статистики
+    }
+
+
     static void ShowMainMenu()
     {
         Console.WriteLine("\n=== Главное меню ===");
