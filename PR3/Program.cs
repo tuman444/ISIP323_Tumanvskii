@@ -13,7 +13,6 @@ class TextAnalyzer
         public int ConsonantCount { get; set; }       // Количество согласных букв
         public string LongestWord { get; set; }       // Самое длинное слово
         public Dictionary<char, int> LetterFrequency { get; set; } // Частота каждой буквы
-        public DateTime AnalysisTime { get; set; }    // Время анализа
     }
 
     private static List<TextStatistics> allStatistics = new List<TextStatistics>();
@@ -71,7 +70,6 @@ class TextAnalyzer
         TextStatistics stats = new TextStatistics   // Создание объекта для хранения статистики
         {
             Text = text.Length > 50 ? text.Substring(0, 47) + "..." : text,
-            AnalysisTime = DateTime.Now
         };
 
         // Выполнение всех анализов
@@ -339,8 +337,64 @@ class TextAnalyzer
         stats.LetterFrequency = frequency;  //сохранение результатов
     }
 
+    // Отображение статистики по текущему тексту
+    static void DisplayCurrentStatistics(TextStatistics stats)
+    {
+        Console.WriteLine("\n--- Результаты анализа ---");
+        Console.WriteLine($"Текст: {stats.Text}");
+        Console.WriteLine($"Количество слов: {stats.WordCount}");
+        Console.WriteLine($"Самое короткое слово: '{stats.ShortestWord}' ({stats.ShortestWord.Length} символов)");
+        Console.WriteLine($"Самое длинное слово: '{stats.LongestWord}' ({stats.LongestWord.Length} символов)");
+        Console.WriteLine($"Количество предложений: {stats.SentenceCount}");
+        Console.WriteLine($"Гласные буквы: {stats.VowelCount}");
+        Console.WriteLine($"Согласные буквы: {stats.ConsonantCount}");
 
+        Console.WriteLine("\nЧастота встречаемых букв:");
+        if (stats.LetterFrequency.Count > 0)
+        {
+            // Сортируем буквы по частоте 
+            var sortedLetters = SortDictionaryByValue(stats.LetterFrequency);
 
+            foreach (var pair in sortedLetters)
+            {
+                Console.WriteLine($"  {char.ToUpper(pair.Key)}: {pair.Value}");
+            }
+        }
+        else
+        {
+            Console.WriteLine("  Буквы не найдены");
+        }
+    }
 
+    // Сортировка словаря по значению (в порядке убывания)
+    static List<KeyValuePair<char, int>> SortDictionaryByValue(Dictionary<char, int> dictionary) 
+    {
+        var list = new List<KeyValuePair<char, int>>();  //преобразование словаряя в список
+
+        // Копируем пары ключ-значение в список
+        foreach (var pair in dictionary)
+        {
+            list.Add(pair);
+        }
+
+        // Сортировка пузырьком по убыванию значений
+        for (int i = 0; i < list.Count - 1; i++)
+        {
+            for (int j = 0; j < list.Count - i - 1; j++)
+            {
+                if (list[j].Value < list[j + 1].Value)
+                {
+                    // Меняем местами
+                    var temp = list[j];
+                    list[j] = list[j + 1];
+                    list[j + 1] = temp;
+                }
+            }
+        }
+
+        return list;
+    }
+
+    
 
 }
