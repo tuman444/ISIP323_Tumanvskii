@@ -250,6 +250,46 @@ class TextAnalyzer
 
         stats.ShortestWord = shortestWord ?? "";  //Защита от null значений
         stats.LongestWord = longestWord ?? "";
-    }   
+    }
+
+
+    // Подсчет количества предложений
+    static void AnalyzeSentenceCount(string text, TextStatistics stats)
+    {
+        if (string.IsNullOrEmpty(text))
+        {
+            stats.SentenceCount = 0;
+            return;
+        }
+
+        int sentenceCount = 0;
+        bool sentenceEnded = true;
+
+        // Проходим по каждому символу текста
+        foreach (char c in text)
+        {
+            if (c == '.' || c == '!' || c == '?' || c == ';')
+            {
+                if (sentenceEnded == false)
+                {
+                    sentenceCount++;
+                    sentenceEnded = true;
+                }
+            }
+            else if (char.IsLetter(c))  //Если символ - буква
+            {
+                sentenceEnded = false;
+            }
+        }
+
+        // Если текст заканчивается без знака препинания
+        if (!sentenceEnded)
+        {
+            sentenceCount++;
+        }
+
+        stats.SentenceCount = sentenceCount;
+    }
+
 
 }
