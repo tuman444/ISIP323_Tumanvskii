@@ -158,4 +158,37 @@ class TextAnalyzer
         return cleaned.ToString().Trim();  //убираем пробел по краям 
     }
 
+    // Подсчет количества слов в тексте
+    static void AnalyzeWordCount(string text, TextStatistics stats)
+    {
+        if (string.IsNullOrEmpty(text)) // проверка на пустую строку
+        {
+            stats.WordCount = 0;
+            return;
+        }
+
+        int wordCount = 0;
+        bool inWord = false;
+
+        foreach (char c in text)  // Проходим по каждому символу текста
+        {
+            if (char.IsLetterOrDigit(c) || c == '\'') // Буквы, цифры и апострофы считаются частью слова
+            {
+                if (!inWord)  // если мы не в слове
+                {
+                    wordCount++;  //начинаем новое слово
+                    inWord = true;
+                }
+            }
+            else // любые другие символы
+            {
+                inWord = false;
+            }
+        }
+
+        stats.WordCount = wordCount;
+    }
+
+
+
 }
