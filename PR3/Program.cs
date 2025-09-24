@@ -66,4 +66,41 @@
         Console.WriteLine("Выберите действие");
     }
 
+    // Получение текста от пользователя с проверкой длины
+    static string GetTextUser()
+    {
+        string text;
+
+        while (true)
+        {
+            Console.WriteLine("Введите текст (минимум 100 символов):");
+            text = Console.ReadLine(); // получение текста
+
+            if (text == null) // проверка на пустую строку
+            {
+                Console.WriteLine("Ошибка ввода. Попробуйте снова.");
+                continue;
+            }
+
+            // Удаляем лишние пробелы и проверяем длину
+            string cleanedText = CleanText(text);
+
+            if (cleanedText.Length < 100)
+            {
+                Console.WriteLine($"Текст слишком короткий! Введено {cleanedText.Length} символов. Минимум 100 символов.");
+                Console.Write("Хотите попробовать снова? (д/н): ");
+                string answer = Console.ReadLine();
+                if (answer?.ToLower() != "д")
+                {
+                    return null;
+                }
+            }
+            else
+            {
+                return cleanedText;
+            }
+        }
+    }
+
+
 }
