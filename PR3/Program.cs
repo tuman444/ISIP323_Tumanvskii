@@ -395,6 +395,47 @@ class TextAnalyzer
         return list;
     }
 
-    
+    // Отображение статистики по прошлым текстам
+    static void ShowPreviousStatistics()
+    {
+        if (allStatistics.Count == 0) //Проверка наличия статистики
+        {
+            Console.WriteLine("\nСтатистика по прошлым текстам отсутствует.");
+            return;
+        }
+
+        Console.WriteLine($"\n--- Статистика по {allStatistics.Count} текстам ---");  //кол-во текстов
+
+        for (int i = 0; i < allStatistics.Count; i++)  // детальная статистика
+        {
+            var stats = allStatistics[i];
+            Console.WriteLine($"\nТекст #{i + 1}");
+            Console.WriteLine($"  Слов: {stats.WordCount}, Предложений: {stats.SentenceCount}");
+            Console.WriteLine($"  Гласные: {stats.VowelCount}, Согласные: {stats.ConsonantCount}");
+            Console.WriteLine($"  Самое короткое слово: '{stats.ShortestWord}'");
+            Console.WriteLine($"  Самое длинное слово: '{stats.LongestWord}'");
+        }
+
+        // Общая статистика по всем текстам
+        Console.WriteLine("\n--- Общая статистика ---");
+        int totalWords = 0;
+        int totalSentences = 0;
+        int totalVowels = 0;
+        int totalConsonants = 0;
+
+        foreach (var stats in allStatistics)
+        {
+            totalWords += stats.WordCount;
+            totalSentences += stats.SentenceCount;
+            totalVowels += stats.VowelCount;
+            totalConsonants += stats.ConsonantCount;
+        }
+
+        Console.WriteLine($"Всего слов: {totalWords}");
+        Console.WriteLine($"Всего предложений: {totalSentences}");
+        Console.WriteLine($"Всего гласных: {totalVowels}");
+        Console.WriteLine($"Всего согласных: {totalConsonants}");
+        Console.WriteLine($"Среднее количество слов на текст: {totalWords / allStatistics.Count}");
+    }
 
 }
