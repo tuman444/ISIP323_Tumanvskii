@@ -1,4 +1,6 @@
-﻿class TextAnalyzer
+﻿using System.Text;
+
+class TextAnalyzer
 {
     class TextStatistics
     {
@@ -102,5 +104,31 @@
         }
     }
 
+    // Очистка текста от лишних пробелов
+    static string CleanText(string text)
+    {
+        // Заменяем множественные пробелы на одинарные и обрезаем края
+        StringBuilder cleaned = new StringBuilder();  // Накопитель для результата
+        bool previousWasSpace = false;      
+
+        foreach (char c in text) //Начало цикла по символам
+        {
+            if (char.IsWhiteSpace(c)) // если символ пробельный 
+            {
+                if (!previousWasSpace) // если предыдущий символ не был пробельным
+                {
+                    cleaned.Append(' ');  //добавляем один пробел
+                    previousWasSpace = true; // теперь пробел был
+                }
+            }
+            else // символ не пробел 
+            {
+                cleaned.Append(c);  //добавляем сивол в результат
+                previousWasSpace = false;       //текущий символ не пробел
+            }
+        }
+
+        return cleaned.ToString().Trim();  //убираем пробел по краям 
+    }
 
 }
