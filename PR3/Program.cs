@@ -57,5 +57,13 @@
         }
     }
 
-    
+    static void ShowMainMenu()
+    {
+        Console.WriteLine("\n=== Главное меню ===");
+        Console.WriteLine("1. Анализировать текст");
+        Console.WriteLine("2. Показать статистику по прошлым текстам");
+        Console.WriteLine("3. Выйти");
+        Console.WriteLine("Выберите действие");
+    }
+
 }
