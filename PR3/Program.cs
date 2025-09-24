@@ -1,4 +1,5 @@
-﻿using System.Text;
+﻿using Microsoft.VisualBasic;
+using System.Text;
 
 class TextAnalyzer
 {
@@ -23,7 +24,7 @@ class TextAnalyzer
         'a', 'e', 'y', 'u', 'i', 'o'
     };
 
-    private static readonly HashSet<char> consanats = new HashSet<char>
+    private static readonly HashSet<char> consonants = new HashSet<char>
     {
         'й', 'ц', 'к', 'н', 'г', 'ш', 'щ', 'з', 'х', 'ф', 'в', 'п', 'р', 'л', 'д', 'ж', 'ч', 'с', 'м', 'т', 'б',
         'q', 'w', 'r', 't', 'p', 's', 'd', 'f', 'g', 'h', 'j', 'k', 'l', 'z', 'x', 'c', 'v', 'b', 'n', 'm'
@@ -290,6 +291,30 @@ class TextAnalyzer
 
         stats.SentenceCount = sentenceCount;
     }
+
+    // Подсчет количества гласных и согласных букв
+    static void AnalyzeLetters(string text, TextStatistics stats)
+    {
+        int vowelCount = 0;
+        int consonantCount = 0;
+
+        // Проходим по каждому символу текста
+        foreach (char c in text.ToLower()) // Приводим к нижнему регистру для сравнения
+        {
+            if (vowels.Contains(c))
+            {
+                vowelCount++;
+            }
+            else if (consonants.Contains(c))
+            {
+                consonantCount++;
+            }
+        }
+
+        stats.VowelCount = vowelCount;
+        stats.ConsonantCount = consonantCount;
+    }
+
 
 
 }
