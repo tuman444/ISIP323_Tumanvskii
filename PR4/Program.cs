@@ -122,6 +122,30 @@
             return true;
         }
 
+        // МЕТОДЫ ПОИСКА
+
+        // Поиск книг по названию
+        public List<Book> FindBooksByTitle(string title)
+        {
+            return books.Where(b => b.Title.Contains(title, StringComparison.OrdinalIgnoreCase))
+                        .ToList();
+        }
+
+        // Поиск книг по автору
+        public List<Book> FindBooksByAuthor(string author)
+        {
+            return books.Where(b => b.Author.Contains(author, StringComparison.OrdinalIgnoreCase))
+                        .ToList();
+        }
+
+        // Поиск книг по жанру 
+        public List<Book> FindBooksByGenre(Genre genre)
+        {
+            return books.Where(b => b.BookGenre == genre)
+                        .ToList();
+        }
+
+
 
     }
 }
