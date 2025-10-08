@@ -209,6 +209,77 @@
         }
 
 
+        // Добавление тестовых книг
+        public void AddTestData()
+        {
+            books.Add(new Book(nextId++, "Властелин Колец", "Дж. Р. Р. Толкин", Genre.Fantasy, 1954, 1200m));
+            books.Add(new Book(nextId++, "1984", "Джордж Оруэлл", Genre.ScienceFiction, 1949, 850m));
+            books.Add(new Book(nextId++, "Убийство в Восточном экспрессе", "Агата Кристи", Genre.Mystery, 1934, 650m));
+            books.Add(new Book(nextId++, "Гордость и предубеждение", "Джейн Остин", Genre.Romance, 1813, 720m));
+            books.Add(new Book(nextId++, "Дракула", "Брэм Стокер", Genre.Horror, 1897, 780m));
+
+            Console.WriteLine("Тестовые данные успешно добавлены!");
+        }
+
+        // Отображение списка всех книг в консоли
+        public void DisplayAllBooks()
+        {
+            if (!books.Any())
+            {
+                Console.WriteLine("В библиотеке нет книг.");
+                return;
+            }
+
+            Console.WriteLine("\n=== ВСЕ КНИГИ В БИБЛИОТЕКЕ ===");
+            foreach (var book in books)
+            {
+                book.DisplayInfo();
+            }
+        }
+
+        // Отображение результатов поиска
+        public void DisplaySearchResults(List<Book> results, string searchType)
+        {
+            if (!results.Any())
+            {
+                Console.WriteLine($"По запросу '{searchType}' ничего не найдено.");
+                return;
+            }
+
+            Console.WriteLine($"\n=== РЕЗУЛЬТАТЫ ПОИСКА ({results.Count} книг) ===");
+            foreach (var book in results)
+            {
+                book.DisplayInfo();
+            }
+        }
+
+        public void DisplayBooksByAuthor() //отображение книг по авторам 
+        {
+            var authorGroups = GroupBooksByAuthor();
+
+            if (!authorGroups.Any())
+            {
+                Console.WriteLine("В библиотеке нет книг.");
+                return;
+            }
+
+            Console.WriteLine("\n=== КНИГИ ПО АВТОРАМ ===");
+
+            // для сортировки по количеству книг
+            foreach (var authorGroup in authorGroups.OrderByDescending(a => a.Value))
+            {
+                Console.WriteLine($"{authorGroup.Key}: {authorGroup.Value} книг(и)");
+
+                //для фильтрации книг по автору
+                var authorBooks = books.Where(b => b.Author == authorGroup.Key);
+                foreach (var book in authorBooks)
+                {
+                    Console.WriteLine($"  - {book.Title} ({book.Year})");
+                }
+                Console.WriteLine();
+            }
+        }
+
 
     }
 }
