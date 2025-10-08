@@ -1,7 +1,7 @@
 ﻿namespace library
 {
     public enum Genre // список жанров
-    { 
+    {
         Fantasy,
         ScienceFiction,
         Mystery,
@@ -46,6 +46,247 @@
         public override string ToString()
         {
             return $"{Title} - {Author} ({Year})";
+        }
+    }
+
+    // Класс для управления коллекцией книг в библиотеке
+    public class Library
+    {
+        private List<Book> books;
+        private int nextId;
+
+        public Library()
+        {
+            books = new List<Book>();
+            nextId = 1;
+        }
+
+        // Добавление новой книги с генерацией ID
+        public bool AddBook(string title, string author, Genre genre, int year, decimal price)
+        {
+            if (!ValidateBookData(title, author, year, price))
+                return false;
+
+            Book newBook = new Book(nextId, title, author, genre, year, price);
+            books.Add(newBook);
+            nextId++;
+
+            Console.WriteLine($"Книга успешно добавлена! ID: {newBook.Id}");
+            return true;
+        }
+        
+        // Удаление книги по идентификатору 
+        public bool RemoveBook(int id)
+        {
+            // LINQ: FirstOrDefault для поиска книги по ID
+            Book bookToRemove = books.FirstOrDefault(b => b.Id == id);
+            if (bookToRemove != null)
+            {
+                books.Remove(bookToRemove);
+                Console.WriteLine($"Книга с ID {id} успешно удалена.");
+                return true;
+            }
+            else
+            {
+                Console.WriteLine($"Книга с ID {id} не найдена.");
+                return false;
+            }
+        }
+
+        // Валидация данных книги перед добавлением
+        private bool ValidateBookData(string title, string author, int year, decimal price)
+        {
+            if (string.IsNullOrWhiteSpace(title))
+            {
+                Console.WriteLine("Ошибка: Название книги не может быть пустым.");
+                return false;
+            }
+
+            if (string.IsNullOrWhiteSpace(author))
+            {
+                Console.WriteLine("Ошибка: Автор не может быть пустым.");
+                return false;
+            }
+
+            if (year < 1000 || year > DateTime.Now.Year)
+            {
+                Console.WriteLine($"Ошибка: Год издания должен быть между 1000 и {DateTime.Now.Year}.");
+                return false;
+            }
+
+            if (price < 0)
+            {
+                Console.WriteLine("Ошибка: Цена не может быть отрицательной.");
+                return false;
+            }
+
+            return true;
+        }
+
+        // МЕТОДЫ ПОИСКА
+
+        // Поиск книг по названию
+        public List<Book> FindBooksByTitle(string title)
+        {
+            // LINQ: Where для фильтрации по названию
+            return books.Where(b => b.Title.Contains(title, StringComparison.OrdinalIgnoreCase))
+                        .ToList();
+        }
+        
+        // Поиск книг по автору
+        public List<Book> FindBooksByAuthor(string author)
+        {
+            // LINQ: Where для фильтрации по автору
+            return books.Where(b => b.Author.Contains(author, StringComparison.OrdinalIgnoreCase))
+                        .ToList();
+        }
+
+        // Поиск книг по жанру 
+        public List<Book> FindBooksByGenre(Genre genre)
+        {
+            // LINQ: Where для фильтрации по жанру
+            return books.Where(b => b.BookGenre == genre)
+                        .ToList();
+        }
+
+
+        //МЕТОДЫ СОРТИРОВКИ
+
+        // Сортировка книг по названию 
+        public List<Book> SortByTitle()
+        {
+            // LINQ: OrderBy для сортировки по названию
+            return books.OrderBy(b => b.Title).ToList();
+        }
+
+        /// Сортировка книг по году издания 
+        public List<Book> SortByYear()
+        {
+            // LINQ: OrderBy для сортировки по году
+            return books.OrderBy(b => b.Year).ToList();
+        }
+
+
+
+
+        // МЕТОДЫ АНАЛИЗА 
+
+        // Получение самой дорогой книги 
+        public Book GetMostExpensiveBook()
+        {
+            return books.OrderByDescending(b => b.Price).FirstOrDefault();
+        }
+
+        // Получение самой дешёвой книги
+        public Book GetCheapestBook()
+        {
+            return books.OrderBy(b => b.Price).FirstOrDefault();
+        }
+
+        // Группировка книг по авторам 
+        public Dictionary<string, int> GroupBooksByAuthor()
+        {
+            return books.GroupBy(b => b.Author)
+                        .ToDictionary(g => g.Key, g => g.Count());
+        }
+
+        // Получение статистики по библиотеке
+        public void DisplayLibraryStats()
+        {
+            Console.WriteLine($"\n=== СТАТИСТИКА БИБЛИОТЕКИ ===");
+
+            Console.WriteLine($"Всего книг: {books.Count}");
+
+            if (books.Any()) 
+            {
+                var mostExpensive = GetMostExpensiveBook();
+                var cheapest = GetCheapestBook();
+
+                Console.WriteLine($"Самая дорогая книга: {mostExpensive.Title} - {mostExpensive.Price:C}");
+                Console.WriteLine($"Самая дешёвая книга: {cheapest.Title} - {cheapest.Price:C}");
+
+                Console.WriteLine($"Средняя цена: {books.Average(b => b.Price):C}");
+
+                var genreStats = books.GroupBy(b => b.BookGenre)
+                                     .Select(g => new { Genre = g.Key, Count = g.Count() });
+
+                Console.WriteLine("\nКниги по жанрам:");
+                foreach (var stat in genreStats)
+                {
+                    Console.WriteLine($"  {stat.Genre}: {stat.Count} книг");
+                }
+            }
+        }
+
+        // Добавление тестовых книг
+        public void AddTestData()
+        {
+            books.Add(new Book(nextId++, "Властелин Колец", "Дж. Р. Р. Толкин", Genre.Fantasy, 1954, 1200m));
+            books.Add(new Book(nextId++, "1984", "Джордж Оруэлл", Genre.ScienceFiction, 1949, 850m));
+            books.Add(new Book(nextId++, "Убийство в Восточном экспрессе", "Агата Кристи", Genre.Mystery, 1934, 650m));
+            books.Add(new Book(nextId++, "Гордость и предубеждение", "Джейн Остин", Genre.Romance, 1813, 720m));
+            books.Add(new Book(nextId++, "Дракула", "Брэм Стокер", Genre.Horror, 1897, 780m));
+
+            Console.WriteLine("Тестовые данные успешно добавлены!");
+        }
+
+        // Отображение списка всех книг в консоли
+        public void DisplayAllBooks()
+        {
+            if (!books.Any())
+            {
+                Console.WriteLine("В библиотеке нет книг.");
+                return;
+            }
+
+            Console.WriteLine("\n=== ВСЕ КНИГИ В БИБЛИОТЕКЕ ===");
+            foreach (var book in books)
+            {
+                book.DisplayInfo();
+            }
+        }
+
+        // Отображение результатов поиска
+        public void DisplaySearchResults(List<Book> results, string searchType)
+        {
+            if (!results.Any())
+            {
+                Console.WriteLine($"По запросу '{searchType}' ничего не найдено.");
+                return;
+            }
+
+            Console.WriteLine($"\n=== РЕЗУЛЬТАТЫ ПОИСКА ({results.Count} книг) ===");
+            foreach (var book in results)
+            {
+                book.DisplayInfo();
+            }
+        }
+
+        public void DisplayBooksByAuthor()
+        {
+            var authorGroups = GroupBooksByAuthor();
+
+            if (!authorGroups.Any())
+            {
+                Console.WriteLine("В библиотеке нет книг.");
+                return;
+            }
+
+            Console.WriteLine("\n=== КНИГИ ПО АВТОРАМ ===");
+
+            // для сортировки по количеству книг
+            foreach (var authorGroup in authorGroups.OrderByDescending(a => a.Value))
+            {
+                Console.WriteLine($"{authorGroup.Key}: {authorGroup.Value} книг(и)");
+
+                //для фильтрации книг по автору
+                var authorBooks = books.Where(b => b.Author == authorGroup.Key);
+                foreach (var book in authorBooks)
+                {
+                    Console.WriteLine($"  - {book.Title} ({book.Year})");
+                }
+                Console.WriteLine();
+            }
         }
     }
 }
