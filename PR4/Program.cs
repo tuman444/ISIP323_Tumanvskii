@@ -38,7 +38,7 @@
             Console.WriteLine($"Автор: {Author}");
             Console.WriteLine($"Жанр: {BookGenre}");
             Console.WriteLine($"Год издания: {Year}");
-            Console.WriteLine($"Цена: {Price:C}");
+            Console.WriteLine($"Цена: {Price:С}");
             Console.WriteLine(new string('-', 40));
         }
 
