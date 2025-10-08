@@ -304,7 +304,7 @@
             while (!exit)
             {
                 DisplayMenu();
-                exit = HandleUserInput();
+                exit = UserInput();
             }
 
             Console.WriteLine("Спасибо за использование системы! До свидания!");
@@ -323,6 +323,83 @@
             Console.WriteLine("7. Книги по авторам");
             Console.WriteLine("8. Выход");
             Console.Write("Выберите действие: ");
+        }
+
+        // Обработка пользовательского ввода
+        private bool UserInput()
+        {
+            string input = Console.ReadLine();
+
+            switch (input)
+            {
+                case "1":
+                    library.DisplayAllBooks();
+                    break;
+                case "2":
+                    AddBookInterface();
+                    break;
+                case "3":
+                    RemoveBookInterface();
+                    break;
+                case "4":
+                    SearchBooksInterface();
+                    break;
+                case "5":
+                    SortBooksInterface();
+                    break;
+                case "6":
+                    library.DisplayLibraryStats();
+                    break;
+                case "7":
+                    library.DisplayBooksByAuthor();
+                    break;
+                case "8":
+                    return true;
+                default:
+                    Console.WriteLine("Неверный ввод. Пожалуйста, выберите действие от 1 до 8.");
+                    break;
+            }
+
+            return false;
+        }
+
+        // Интерфейс добавления книги с вводом данных от пользователя
+        private void AddBookInterface()
+        {
+            Console.WriteLine("\n=== ДОБАВЛЕНИЕ НОВОЙ КНИГИ ===");
+
+            try
+            {
+                Console.Write("Введите название книги: ");
+                string title = Console.ReadLine();
+
+                Console.Write("Введите автора: ");
+                string author = Console.ReadLine();
+
+                Console.WriteLine("Доступные жанры:");
+                foreach (var Genre in Enum.GetValues(typeof(Genre)))
+                {
+                    Console.WriteLine($"  {(int)Genre}. {Genre}");
+                }
+                Console.Write("Выберите жанр (номер): ");
+                Genre genre = (Genre)int.Parse(Console.ReadLine());
+
+                Console.Write("Введите год издания: ");
+                int year = int.Parse(Console.ReadLine());
+
+                Console.Write("Введите цену: ");
+                decimal price = decimal.Parse(Console.ReadLine());
+
+                bool success = library.AddBook(title, author, genre, year, price);
+                if (!success)
+                {
+                    Console.WriteLine("Не удалось добавить книгу. Проверьте введенные данные.");
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Ошибка ввода: {ex.Message}");
+            }
         }
     }
 }
