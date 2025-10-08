@@ -127,23 +127,38 @@
         // Поиск книг по названию
         public List<Book> FindBooksByTitle(string title)
         {
-            return books.Where(b => b.Title.Contains(title, StringComparison.OrdinalIgnoreCase))
-                        .ToList();
+            return books.Where(b => b.Title.Contains(title, StringComparison.OrdinalIgnoreCase)).ToList();
         }
 
         // Поиск книг по автору
         public List<Book> FindBooksByAuthor(string author)
         {
-            return books.Where(b => b.Author.Contains(author, StringComparison.OrdinalIgnoreCase))
-                        .ToList();
+            return books.Where(b => b.Author.Contains(author, StringComparison.OrdinalIgnoreCase)).ToList();
         }
 
         // Поиск книг по жанру 
         public List<Book> FindBooksByGenre(Genre genre)
         {
-            return books.Where(b => b.BookGenre == genre)
-                        .ToList();
+            return books.Where(b => b.BookGenre == genre).ToList();
         }
+
+
+        //МЕТОДЫ СОРТИРОВКИ
+
+        // Сортировка книг по названию 
+        public List<Book> SortByTitle()
+        {
+            // LINQ: OrderBy для сортировки по названию
+            return books.OrderBy(b => b.Title).ToList();
+        }
+
+        /// Сортировка книг по году издания 
+        public List<Book> SortByYear()
+        {
+            // LINQ: OrderBy для сортировки по году
+            return books.OrderBy(b => b.Year).ToList();
+        }
+
 
 
 
