@@ -471,5 +471,52 @@
                 Console.WriteLine($"Ошибка поиска: {ex.Message}");
             }
         }
+
+        // Интерфейс сортировки книг
+        private void SortBooksInterface()
+        {
+            Console.WriteLine("\n=== СОРТИРОВКА КНИГ ===");
+            Console.WriteLine("1. По названию");
+            Console.WriteLine("2. По году издания");
+            Console.Write("Выберите тип сортировки: ");
+
+            string choice = Console.ReadLine();
+            List<Book> sortedBooks = new List<Book>();
+
+            switch (choice)
+            {
+                case "1":
+                    sortedBooks = library.SortByTitle();
+                    Console.WriteLine("\nКниги отсортированы по названию:");
+                    break;
+
+                case "2":
+                    sortedBooks = library.SortByYear();
+                    Console.WriteLine("\nКниги отсортированы по году издания:");
+                    break;
+
+
+                default:
+                    Console.WriteLine("Неверный выбор.");
+                    return;
+            }
+
+            if (sortedBooks.Any())
+            {
+                foreach (var book in sortedBooks)
+                {
+                    book.DisplayInfo();
+                }
+            }
+            else
+            {
+                Console.WriteLine("Нет книг для отображения.");
+            }
+        }
+        static void Main(string[] args) //задаем точку входу
+        {
+            Program app = new Program();
+            app.Run();
+        }
     }
 }
