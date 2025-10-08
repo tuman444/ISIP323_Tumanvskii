@@ -292,5 +292,22 @@
         {
             library = new Library();
         }
+
+        // Главный метод запуска приложения
+        public void Run()
+        {
+            Console.WriteLine("Добро пожаловать в систему учета библиотеки!");
+
+            library.AddTestData();
+
+            bool exit = false;
+            while (!exit)
+            {
+                DisplayMenu();
+                exit = HandleUserInput();
+            }
+
+            Console.WriteLine("Спасибо за использование системы! До свидания!");
+        }
     }
 }
