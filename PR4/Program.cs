@@ -401,5 +401,75 @@
                 Console.WriteLine($"Ошибка ввода: {ex.Message}");
             }
         }
+
+        // Интерфейс удаления книги
+        private void RemoveBookInterface()
+        {
+            Console.WriteLine("\n=== УДАЛЕНИЕ КНИГИ ===");
+
+            try
+            {
+                Console.Write("Введите ID книги для удаления: ");
+                int id = int.Parse(Console.ReadLine());
+
+                library.RemoveBook(id);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Ошибка ввода: {ex.Message}");
+            }
+        }
+
+        // Интерфейс поиска книг
+        private void SearchBooksInterface()
+        {
+            Console.WriteLine("\n=== ПОИСК КНИГ ===");
+            Console.WriteLine("1. По названию");
+            Console.WriteLine("2. По автору");
+            Console.WriteLine("3. По жанру");
+            Console.Write("Выберите тип поиска: ");
+
+            string choice = Console.ReadLine();
+
+            try
+            {
+                switch (choice)
+                {
+                    case "1":
+                        Console.Write("Введите название для поиска: ");
+                        string title = Console.ReadLine();
+                        var titleResults = library.FindBooksByTitle(title);
+                        library.DisplaySearchResults(titleResults, $"по названию '{title}'");
+                        break;
+
+                    case "2":
+                        Console.Write("Введите автора для поиска: ");
+                        string author = Console.ReadLine();
+                        var authorResults = library.FindBooksByAuthor(author);
+                        library.DisplaySearchResults(authorResults, $"по автору '{author}'");
+                        break;
+
+                    case "3":
+                        Console.WriteLine("Доступные жанры:");
+                        foreach (var genre in Enum.GetValues(typeof(Genre)))
+                        {
+                            Console.WriteLine($"  {(int)genre}. {genre}");
+                        }
+                        Console.Write("Выберите жанр (номер): ");
+                        Genre genreSearch = (Genre)int.Parse(Console.ReadLine());
+                        var genreResults = library.FindBooksByGenre(genreSearch);
+                        library.DisplaySearchResults(genreResults, $"по жанру '{genreSearch}'");
+                        break;
+
+                    default:
+                        Console.WriteLine("Неверный выбор.");
+                        break;
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Ошибка поиска: {ex.Message}");
+            }
+        }
     }
 }
