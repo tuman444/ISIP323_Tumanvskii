@@ -309,5 +309,20 @@
 
             Console.WriteLine("Спасибо за использование системы! До свидания!");
         }
+
+        // Отображение главного меню
+        private void DisplayMenu()
+        {
+            Console.WriteLine("\n=== ГЛАВНОЕ МЕНЮ ===");
+            Console.WriteLine("1. Показать все книги");
+            Console.WriteLine("2. Добавить книгу");
+            Console.WriteLine("3. Удалить книгу");
+            Console.WriteLine("4. Найти книги");
+            Console.WriteLine("5. Сортировать книги");
+            Console.WriteLine("6. Статистика библиотеки");
+            Console.WriteLine("7. Книги по авторам");
+            Console.WriteLine("8. Выход");
+            Console.Write("Выберите действие: ");
+        }
     }
 }
