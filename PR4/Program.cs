@@ -160,6 +160,54 @@
         }
 
 
+        // МЕТОДЫ АНАЛИЗА 
+
+        // Получение самой дорогой книги 
+        public Book GetMostExpensiveBook()
+        {
+            return books.OrderByDescending(b => b.Price).FirstOrDefault();
+        }
+
+        // Получение самой дешёвой книги
+        public Book GetCheapestBook()
+        {
+            return books.OrderBy(b => b.Price).FirstOrDefault();
+        }
+
+        // Группировка книг по авторам 
+        public Dictionary<string, int> GroupBooksByAuthor()
+        {
+            return books.GroupBy(b => b.Author).ToDictionary(g => g.Key, g => g.Count());
+        }
+
+        // Получение статистики по библиотеке
+        public void DisplayLibraryStats()
+        {
+            Console.WriteLine($"\n=== СТАТИСТИКА БИБЛИОТЕКИ ===");
+
+            Console.WriteLine($"Всего книг: {books.Count}");
+
+            if (books.Any())
+            {
+                var mostExpensive = GetMostExpensiveBook();
+                var cheapest = GetCheapestBook();
+
+                Console.WriteLine($"Самая дорогая книга: {mostExpensive.Title} - {mostExpensive.Price:C}");
+                Console.WriteLine($"Самая дешёвая книга: {cheapest.Title} - {cheapest.Price:C}");
+
+                Console.WriteLine($"Средняя цена: {books.Average(b => b.Price):C}");
+
+                var genreStats = books.GroupBy(b => b.BookGenre)
+                                     .Select(g => new { Genre = g.Key, Count = g.Count() });
+
+                Console.WriteLine("\nКниги по жанрам:");
+                foreach (var stat in genreStats)
+                {
+                    Console.WriteLine($"  {stat.Genre}: {stat.Count} книг");
+                }
+            }
+        }
+
 
 
     }
