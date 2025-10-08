@@ -253,7 +253,8 @@
             }
         }
 
-        public void DisplayBooksByAuthor() //отображение книг по авторам 
+        //отображение книг по авторам 
+        public void DisplayBooksByAuthor() 
         {
             var authorGroups = GroupBooksByAuthor();
 
@@ -279,7 +280,17 @@
                 Console.WriteLine();
             }
         }
+    }
 
 
+    // Главный класс приложения 
+    public class Program
+    {
+        private Library library;
+
+        public Program()
+        {
+            library = new Library();
+        }
     }
 }
