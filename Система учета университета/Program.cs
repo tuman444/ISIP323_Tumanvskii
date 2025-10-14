@@ -5,7 +5,7 @@ namespace UniversityManagementSystem
     public abstract class Person //класс для всех людей в университете
     {
 
-        public person() //конструктор класса
+        public Person() //конструктор класса
         {
 
         }
@@ -16,8 +16,18 @@ namespace UniversityManagementSystem
         // Виртуальный метод 
         public virtual string GetBasicInfo()
         {
-            
+
         }
 
+    }
+
+    public class Student : Person // Класс студентоа, наследуется от Person
+    {
+
+
+        public Student() //конструктор класса
+        {
+
+        }
     }
 }
