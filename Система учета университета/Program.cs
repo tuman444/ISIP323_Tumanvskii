@@ -42,5 +42,14 @@ namespace UniversityManagementSystem
         }
     }
 
-  
+    
+    public class Teacher : Person // Класс преподавателя, наследуется от Person
+    {
+        public Teacher()
+        {
+
+        }
+    }
+
+
 }
