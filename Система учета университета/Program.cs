@@ -51,5 +51,13 @@ namespace UniversityManagementSystem
         }
     }
 
+    public class Course // класс курс
+    {
+
+        public Course()
+        {
+
+        }
+    }
 
 }
