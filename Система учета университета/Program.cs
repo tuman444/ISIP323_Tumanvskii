@@ -51,7 +51,7 @@ namespace UniversityManagementSystem
         }
     }
 
-    public class Course // класс курс
+    public class Course // класс курсов
     {
 
         public Course()
@@ -59,5 +59,15 @@ namespace UniversityManagementSystem
 
         }
     }
+
+    public class UniversManager //основной класс для управления системы университета
+    {
+
+        public UniversManager()
+        {
+
+        }
+    }
+
 
 }
