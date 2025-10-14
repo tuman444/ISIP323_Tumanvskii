@@ -34,5 +34,10 @@ namespace UniversityManagementSystem
         {
 
         }
+
+        public void UnenrollFromCourse() // Метод для отписки от курса
+        {
+
+        }
     }
 }
