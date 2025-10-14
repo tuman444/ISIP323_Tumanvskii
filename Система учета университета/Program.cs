@@ -69,5 +69,13 @@ namespace UniversityManagementSystem
         }
     }
 
+    public class ConsoleInterface // Класс для работы с консольным интерфейсом
+    {
+        public ConsoleInterface()
+        {
 
+        }   
+    }
+
+    
 }
