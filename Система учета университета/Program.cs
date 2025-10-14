@@ -29,5 +29,10 @@ namespace UniversityManagementSystem
         {
 
         }
+
+        public void EnrollInCourse() //Метод для записи на курс
+        {
+
+        }
     }
 }
