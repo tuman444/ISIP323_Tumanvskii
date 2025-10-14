@@ -4,15 +4,12 @@ namespace UniversityManagementSystem
 {
     public abstract class Person //класс для всех людей в университете
     {
-
         public Person() //конструктор класса
         {
 
         }
-
         // Абстрактный метод для полиморфизма 
         public abstract string GetInfo();
-
         // Виртуальный метод 
         public virtual string GetBasicInfo()
         {
@@ -23,21 +20,27 @@ namespace UniversityManagementSystem
 
     public class Student : Person // Класс студентоа, наследуется от Person
     {
-
-
         public Student() //конструктор класса
         {
 
         }
-
         public void EnrollInCourse() //Метод для записи на курс
         {
 
         }
-
         public void UnenrollFromCourse() // Метод для отписки от курса
         {
 
         }
+        public override string GetInfo() //переопределение GetInfo
+        {
+
+        }
+        public string GetCoursesInfo()
+        {
+
+        }
     }
+
+  
 }
