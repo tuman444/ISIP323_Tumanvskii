@@ -77,5 +77,13 @@ namespace UniversityManagementSystem
         }   
     }
 
-    
+    class Program
+    {
+        static void Main(string[] args)
+        {
+            // Создание и запуск консольного интерфейса
+            var consoleInterface = new ConsoleInterface();
+
+        }
+    }
 }
