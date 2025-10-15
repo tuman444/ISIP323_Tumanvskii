@@ -102,6 +102,44 @@ namespace UniversityManagementSystem
         {
 
         }
+
+        public void AddStudent() // Методы для добавления сущностей
+        {
+
+        }
+        public void AddTeacher()
+        {
+
+        }
+        public void AddCourse()
+        {
+
+        }
+        public Student FindStudentById() //Метод для поиска студента по ID
+        {
+
+        }
+        public Teacher FindTeacherById() // Метод для поиска преподавателя по ID
+        {
+
+        }
+        public Course FindCourseByCode() // Метод для поиска курса по коду
+        {
+
+        }
+
+        public void EnrollStudentInCourse() // Метод для записи студента на курс
+        {
+
+        }
+        public void AssignTeacherToCourse() // Метод для назначения преподавателя на курс
+        {
+
+        }
+        public void RemoveTeacherFromCourse() // Метод для снятия преподавателя с курса
+        {
+
+        }
     }
 
     public class ConsoleInterface // Класс для работы с консольным интерфейсом
@@ -109,7 +147,10 @@ namespace UniversityManagementSystem
         public ConsoleInterface()
         {
 
-        }   
+        }
+
+       
+
     }
 
     class Program
