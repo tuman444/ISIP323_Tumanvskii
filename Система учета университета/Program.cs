@@ -46,59 +46,94 @@ namespace UniversityManagementSystem
 
     public class Student : Person // Класс студентоа, наследуется от Person
     {
-        public Student() //конструктор класса
+        private List<Course> enrolledCourses;
+        private static int nextId = 1;
+        private int studentId;
+        public Student(string name, int age, string email) : base(name, age, email)//конструктор класса
         {
+            studentId = nextId++;
+            enrolledCourses = new List<Course>();
+        }
+
+        public int StudentId => studentId;
+
+        public void EnrollInCourse(Course course) //Метод для записи на курс
+        {
+            if(course == null)
+                throw new ArgumentNullException(nameof(course));
+            if (!enrolledCourses.Contains(course))
+            {
+                enrolledCourses.Add(course);
+                course.AddStudent(this);
+            }
 
         }
-        public void EnrollInCourse() //Метод для записи на курс
+        public void UnenrollFromCourse(Course course) // Метод для отписки от курса
         {
-
-        }
-        public void UnenrollFromCourse() // Метод для отписки от курса
-        {
-
+            if (course != null && enrolledCourses.Contains(course))
+            {
+                enrolledCourses.Remove(course);
+                course.RemoveStudent(this);
+            }
         }
         public override string GetInfo() //переопределение GetInfo
         {
-
+            return $"{GetBasicInfo()}, ID: {StudentId}, Количество курсов: {enrolledCourses.Count}";
         }
-        public string GetCoursesInfo()
+        public string GetCoursesInfo() // Метод для получения информации о курсах студента
         {
-
+            if (enrolledCourses.Count == 0)
+                return "Студент не записан на курсы";
+            return string.Join(", ", enrolledCourses.Select(c => c.CourseName));
         }
     }
 
     
     public class Teacher : Person // Класс преподавателя, наследуется от Person
     {
-        public Teacher()
+        private List<Course> teachingCourses;
+        private static int nextId = 1;
+        private int teacherId;
+        private string departament;
+        public Teacher(string name, int age, string email, string departament) : base(name,age,email)
         {
+            if (string.IsNullOrEmpty(departament)) 
+                throw new ArgumentNullException("Кафедра не может быть пустой");
+            teacherId = nextId++;
+            this.departament = departament;
+            teachingCourses = new List<Course>();
+        }
+        // Свойства только для чтения
+        public int TeacherId => teacherId;
+        public string Departament => departament;
+        public void AssignToCourse(Course course) // Метод для назначения на курс
+        {
+            if (course == null)
+                throw new ArgumentNullException(nameof(course));
+            if (!teachingCourses.Contains(course))
+            {
+                teachingCourses.Add(course);
+                course.AssignTeacher(this);
+            }
 
         }
-
-        public void AssignToCourse() // Метод для назначения на курс
+        public void RemoveFromCourse(Course course) // Метод для снятия с курса
         {
-
-        }
-        public void RemoveFromCourse() // Метод для снятия с курса
-        {
-
+            if (course != null && teachingCourses.Contains(course))
+            {
+                teachingCourses.Remove(course);
+                course.RemoveTeacher();
+            }
         }
         public override string GetInfo() //Переопределение абстрактного метода 
         {
-
+            return $"{GetBasicInfo()}, ID: {TeacherId}, Кафедра: {Department}, Количество курсов: {teachingCourses.Count}";
         }
     }
 
     public class Course // класс курсов
     {
-
-        public Course()
-        {
-
-        }
-
-
+        
         public void AddStudent() //Метод для добавления студента
         {
 
