@@ -1,4 +1,5 @@
-﻿using System.Xml.Linq;
+﻿using System.Linq;
+using System.Xml.Linq;
 
 namespace UniversityManagementSystem
 {
@@ -189,28 +190,89 @@ namespace UniversityManagementSystem
 
     public class UniversManager //основной класс для управления системы университета
     {
-        
-        public Course FindCourseByCode() // Метод для поиска курса по коду
-        {
+        private List<Student> students;
+        private List<Teacher> teachers;
+        private List<Course> courses;
 
+        public UniversManager()
+        {
+            students = new List<Student>();
+            teachers = new List<Teacher>();
+            courses = new List<Course>();
         }
 
-        public void EnrollStudentInCourse() // Метод для записи студента на курс
+        public void AddStudent(Student student) // Методы для добавления сущностей
         {
-
+            if (student == null) throw new ArgumentNullException(nameof(student));
+            students.Add(student);
         }
-        private void UnenrollStudentFromCourse() // метод для снятия студента с курса
+        public void AddTeacher(Teacher teacher)
         {
-
+            if (teacher == null) throw new ArgumentNullException(nameof(teacher));
+            teachers.Add(teacher);
         }
-        public void AssignTeacherToCourse() // Метод для назначения преподавателя на курс
+        public void AddCourse(Course course)
         {
-
+            if (course == null) throw new ArgumentNullException(nameof(course));
+            courses.Add(course);
         }
-        public void RemoveTeacherFromCourse() // Метод для снятия преподавателя с курса
+        // Методы для получения списков
+        public IReadOnlyList<Student> GetAllStudents() => students.AsReadOnly();
+        public IReadOnlyList<Teacher> GetAllTeachers() => teachers.AsReadOnly();
+        public IReadOnlyList<Course> GetAllCourses() => courses.AsReadOnly();
+
+        public Student FindStudentById(int id) //Метод для поиска студента по ID
         {
-
+            return students.FirstOrDefault(s => s.StudentId == id);
         }
+        public Teacher FindTeacherById(int id) // Метод для поиска преподавателя по ID
+        {
+            return teachers.FirstOrDefault(t => t.TeacherId == id);
+        }
+        public Course FindCourseByCode(string code) // Метод для поиска курса по коду
+        {
+            return courses.FirstOrDefault(c => c.CourseCode == code);
+        }
+
+        public void EnrollStudentInCourse(int studentId, string courseCode) // Метод для записи студента на курс
+        {
+            var student = FindStudentById(studentId);
+            var course = FindCourseByCode(courseCode);
+
+            if (student == null || course == null)
+                throw new ArgumentException("Студент или курс не найден");
+
+            student.EnrollInCourse(course);
+        }
+        private void UnenrollStudentFromCourse(int studentId, string courseCode) // метод для снятия студента с курса
+        {
+            var student = FindStudentById(studentId);
+            var course = FindCourseByCode(courseCode);
+            if (student == null || course == null)
+                throw new ArgumentException("Студент или курс не найден");
+            student.UnenrollFromCourse(course);
+        }
+        public void AssignTeacherToCourse(int teacherId, string courseCode) // Метод для назначения преподавателя на курс
+        {
+            var teacher = FindTeacherById(teacherId);
+            var course = FindCourseByCode(courseCode);
+
+            if (teacher == null || course == null)
+                throw new ArgumentException("Преподаватель или курс не найден");
+
+            teacher.AssignToCourse(course);
+        }
+        public void RemoveTeacherFromCourse(int teacherId, string courseCode) // Метод для снятия преподавателя с курса
+        {
+            var teacher = FindTeacherById(teacherId);
+            var course = FindCourseByCode(courseCode);
+
+            if (teacher == null || course == null)
+                throw new ArgumentException("Преподаватель или курс не найден");
+
+            teacher.RemoveFromCourse(course);
+        }
+    }
     }
 
     public class ConsoleInterface // Класс для работы с консольным интерфейсом
