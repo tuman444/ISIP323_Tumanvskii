@@ -49,6 +49,19 @@ namespace UniversityManagementSystem
         {
 
         }
+
+        public void AssignToCourse() // Метод для назначения на курс
+        {
+
+        }
+        public void RemoveFromCourse() // Метод для снятия с курса
+        {
+
+        }
+        public override string GetInfo() //Переопределение абстрактного метода 
+        {
+
+        }
     }
 
     public class Course // класс курсов
