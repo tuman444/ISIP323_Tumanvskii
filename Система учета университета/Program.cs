@@ -4,16 +4,42 @@ namespace UniversityManagementSystem
 {
     public abstract class Person //класс для всех людей в университете
     {
-        public Person() //конструктор класса
+        private string name;
+        private int age;
+        private string email;
+        public Person(string name, int age, string email) //конструктор класса
         {
-
+            if(string.IsNullOrEmpty(name))
+                throw new ArgumentException("Имя не должно быть пустым");
+            if(age < 0 || age > 100)
+                throw new ArgumentException("Взраст должен быть не меньше 0 и не больше 100");
+            if (string.IsNullOrEmpty(email))
+                throw new ArgumentException("email не должен быть пустым");
+            this.name = name;
+            this.age = age;
+            this.email = email;
+        }
+        public string Name // Свойства с защищенным set для инкапсуляции
+        {
+            get => name;
+            protected set => name = value;
+        }
+        public int Age
+        {
+            get => age;
+            protected set => age = value;
+        }
+        public string Email
+        {
+            get => email;
+            protected set => email = value;
         }
         // Абстрактный метод для полиморфизма 
         public abstract string GetInfo();
         // Виртуальный метод 
         public virtual string GetBasicInfo()
         {
-
+            return $"Имя: {Name}, Возраст: {Age}, Email: {Email}";
         }
 
     }
@@ -129,6 +155,10 @@ namespace UniversityManagementSystem
         }
 
         public void EnrollStudentInCourse() // Метод для записи студента на курс
+        {
+
+        }
+        private void UnenrollStudentFromCourse() // метод для снятия студента с курса
         {
 
         }
