@@ -71,6 +71,28 @@ namespace UniversityManagementSystem
         {
 
         }
+
+
+        public void AddStudent() //Метод для добавления студента
+        {
+
+        }
+        public void RemoveStudent() // Метод для удаления студента
+        {
+
+        }
+        public void AssignTeacher() // Метод для назначения преподавателя
+        {
+
+        }
+        public void RemoveTeacher() //Метод для удаления преподавателя
+        {
+
+        }
+        public string GetCourseInfo() //Метод для получения информации о курсе
+        {
+
+        }
     }
 
     public class UniversManager //основной класс для управления системы университета
