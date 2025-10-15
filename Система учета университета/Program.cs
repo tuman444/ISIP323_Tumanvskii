@@ -244,7 +244,7 @@ namespace UniversityManagementSystem
 
             student.EnrollInCourse(course);
         }
-        private void UnenrollStudentFromCourse(int studentId, string courseCode) // метод для снятия студента с курса
+        public void UnenrollStudentFromCourse(int studentId, string courseCode) // метод для снятия студента с курса
         {
             var student = FindStudentById(studentId);
             var course = FindCourseByCode(courseCode);
@@ -262,7 +262,7 @@ namespace UniversityManagementSystem
 
             teacher.AssignToCourse(course);
         }
-        public void RemoveTeacherFromCourse(int teacherId, string courseCode) // Метод для снятия преподавателя с курса
+        public void RemoveTeacherFromCourse(int teacherId, string courseCode    ) // Метод для снятия преподавателя с курса
         {
             var teacher = FindTeacherById(teacherId);
             var course = FindCourseByCode(courseCode);
@@ -273,50 +273,343 @@ namespace UniversityManagementSystem
             teacher.RemoveFromCourse(course);
         }
     }
-    }
+    
 
     public class ConsoleInterface // Класс для работы с консольным интерфейсом
     {
+        private UniversManager universManager;
         public ConsoleInterface()
         {
-
+            universManager = new UniversManager();
         }
 
         public void Run() //Основной метод запуска интерфейса
         {
+            while (true)
+            {
+                ShowMainMenu();
+                var choice = GetUserChoice();
 
+                switch (choice)
+                {
+                    case 1:
+                        Console.WriteLine("1. Добавить студента");
+                        AddStudent(); break;
+                    case 2: AddTeacher(); break;
+                    case 3: AddCourse(); break;
+                    case 4: ShowAllStudents(); break;
+                    case 5: ShowAllTeachers(); break;
+                    case 6: ShowAllCourse(); break;
+                    case 7: EnrollStudentInCourse(); break;
+                    case 8: UnenrollStudentFromCourse(); break;
+                    case 9: AssignTeacherToCourse(); break;
+                    case 10: RemoveTeacherFromCourse(); break;
+                    case 11: ShowStudentCourses(); break;
+                    case 12: ShowCourseStudents(); break;
+                    case 0: return;
+                    default: Console.WriteLine("Неверный выбор"); break;
+                }
+            }
         }
-        private void ShowMainMenu() // Метод для отображения главного меню
+        private void ShowMainMenu()
         {
-
+            Console.Clear();
+            Console.WriteLine("=== Система управления университетом ===");
+            Console.WriteLine("1. Добавить студента");
+            Console.WriteLine("2. Добавить преподавателя");
+            Console.WriteLine("3. Добавить курс");
+            Console.WriteLine("4. Показать всех студентов");
+            Console.WriteLine("5. Показать всех преподавателей");
+            Console.WriteLine("6. Показать все курсы");
+            Console.WriteLine("7. Записать студента на курс");
+            Console.WriteLine("8. Снять студента с курса");
+            Console.WriteLine("9. Назначить преподавателя на курс");
+            Console.WriteLine("10. Снять преподавателя с курса");
+            Console.WriteLine("11. Показать курсы студента");
+            Console.WriteLine("12. Показать студентов курса");
+            Console.WriteLine("0. Выход");
+            Console.Write("Выберите опцию: ");
         }
         private int GetUserChoice() // Метод для получения выбора пользователя
         {
-
+            if (int.TryParse(Console.ReadLine(), out int choice))
+                return choice;
+            return -1;
         }
         private void AddStudent() //Метод для добавления студента
         {
+            try
+            {
+                Console.Write("Введите имя студента: ");
+                string name = Console.ReadLine();
 
+                Console.Write("Введите возраст студента: ");
+                if (!int.TryParse(Console.ReadLine(), out int age))
+                    throw new ArgumentException("Некорректный возраст");
+
+                Console.Write("Введите email студента: ");
+                string email = Console.ReadLine();
+
+                var student = new Student(name, age, email);
+                universManager.AddStudent(student);
+                Console.WriteLine("Студент успешно добавлен");
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Ошибка: {ex.Message}");
+            }
         }
         private void AddTeacher() // Метод для добавления преподавателя
         {
+            try
+            {
+                Console.Write("Введите имя преподавателя: ");
+                string name = Console.ReadLine();
 
+                Console.Write("Введите возраст преподавателя: ");
+                if (!int.TryParse(Console.ReadLine(), out int age))
+                    throw new ArgumentException("Некорректный возраст");
+
+                Console.Write("Введите email преподавателя: ");
+                string email = Console.ReadLine();
+
+                Console.Write("Введите кафедру: ");
+                string department = Console.ReadLine();
+
+                var teacher = new Teacher(name, age, email, department);
+                universManager.AddTeacher(teacher);
+                Console.WriteLine("Преподаватель успешно добавлен!");
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Ошибка: {ex.Message}");
+            }
+            Console.WriteLine("\nНажмите любую клавишу для продолжения...");
+            Console.ReadKey();
         }
         private void AddCourse() // Метод для добавления курса
         {
+            try
+            {
+                Console.Write("Введите название курса: ");
+                string name = Console.ReadLine();
 
+                Console.Write("Введите максимальное количество студентов: ");
+                if (!int.TryParse(Console.ReadLine(), out int maxStudents))
+                    throw new ArgumentException("Некорректное количество");
+
+                var course = new Course(name, maxStudents);
+                universManager.AddCourse(course);
+                Console.WriteLine($"Курс успешно добавлен! Код курса: {course.CourseCode}");
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Ошибка: {ex.Message}");
+            }
+            Console.WriteLine("\nНажмите любую клавишу для продолжения...");
+            Console.ReadKey();
         }
-        private void ShowAllStudents() 
-        { 
-
-        }//Метод для отображения всех студентов
+        private void ShowAllStudents() //Метод для отображения всех студентов
+        {
+            var students = universManager.GetAllStudents();
+            if (students.Count == 0)
+            {
+                Console.WriteLine("Студенты не найдены.");
+            }
+            else
+            {
+                Console.WriteLine("Список студентов:");
+                foreach (var student in students)
+                {
+                    Console.WriteLine(student.GetInfo());
+                }
+            }
+            Console.WriteLine("\nНажмите любую клавишу для продолжения...");
+            Console.ReadKey();
+        }
         private void ShowAllTeachers() // Метод для отображения всех преподавателей
         {
-
+            var teachers = universManager.GetAllTeachers();
+            if (teachers.Count == 0)
+            {
+                Console.WriteLine("Преподаватели не найдены.");
+            }
+            else
+            {
+                Console.WriteLine("Список преподавателей:");
+                foreach (var teacher in teachers)
+                {
+                    Console.WriteLine(teacher.GetInfo());
+                }
+            }
+            Console.WriteLine("\nНажмите любую клавишу для продолжения...");
+            Console.ReadKey();
         }
         private void ShowAllCourse() // Метод для отображения всех курсов
         {
-            
+            var courses = universManager.GetAllCourses();
+            if (courses.Count == 0)
+            {
+                Console.WriteLine("Курсы не найдены.");
+            }
+            else
+            {
+                Console.WriteLine("Список курсов:");
+                foreach (var course in courses)
+                {
+                    Console.WriteLine(course.GetCourseInfo());
+                }
+            }
+            Console.WriteLine("\nНажмите любую клавишу для продолжения...");
+            Console.ReadKey();
+        }
+        private void EnrollStudentInCourse()// Метод для записи студента на курс
+        {
+            try
+            {
+                ShowAllStudents();
+                Console.Write("Введите ID студента: ");
+                if (!int.TryParse(Console.ReadLine(), out int studentId))
+                    throw new ArgumentException("Некорректный ID студента");
+
+                ShowAllCourse();
+                Console.Write("Введите код курса: ");
+                string courseCode = Console.ReadLine();
+
+                universManager.EnrollStudentInCourse(studentId, courseCode);
+                Console.WriteLine("Студент успешно записан на курс!");
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Ошибка: {ex.Message}");
+            }
+            Console.WriteLine("\nНажмите любую клавишу для продолжения...");
+            Console.ReadKey();
+        }
+        private void UnenrollStudentFromCourse() //метод для удаления студента с курса
+        {
+            try
+            {
+                ShowAllStudents();
+                Console.Write("Введите ID студента: ");
+                if (!int.TryParse(Console.ReadLine(), out int studentId))
+                    throw new ArgumentException("Некорректный ID студента");
+
+                ShowAllCourse();
+                Console.Write("Введите код курса: ");
+                string courseCode = Console.ReadLine();
+
+                universManager.UnenrollStudentFromCourse(studentId, courseCode);
+                Console.WriteLine("Студент успешно снят с курса!");
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Ошибка: {ex.Message}");
+            }
+            Console.WriteLine("\nНажмите любую клавишу для продолжения...");
+            Console.ReadKey();
+        }
+        private void AssignTeacherToCourse() // Метод для назначения преподавателя на курс
+        {
+            try
+            {
+                ShowAllTeachers();
+                Console.Write("Введите ID преподавателя: ");
+                if (!int.TryParse(Console.ReadLine(), out int teacherId))
+                    throw new ArgumentException("Некорректный ID преподавателя");
+
+                ShowAllCourse();
+                Console.Write("Введите код курса: ");
+                string courseCode = Console.ReadLine();
+
+                universManager.AssignTeacherToCourse(teacherId, courseCode);
+                Console.WriteLine("Преподаватель успешно назначен на курс!");
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Ошибка: {ex.Message}");
+            }
+            Console.WriteLine("\nНажмите любую клавишу для продолжения...");
+            Console.ReadKey();
+        }
+        private void RemoveTeacherFromCourse() // метод для снятия преподавателя с курса
+        {
+            try
+            {
+                ShowAllTeachers();
+                Console.Write("Введите ID преподавателя: ");
+                if (!int.TryParse(Console.ReadLine(), out int teacherId))
+                    throw new ArgumentException("Некорректный ID преподавателя");
+
+                ShowAllCourse();
+                Console.Write("Введите код курса: ");
+                string courseCode = Console.ReadLine();
+
+                universManager.RemoveTeacherFromCourse(teacherId, courseCode);
+                Console.WriteLine("Преподаватель снят с курса");
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Ошибка: {ex.Message}");
+            }
+            Console.WriteLine("\nНажмите любую клавишу для продолжения...");
+            Console.ReadKey();
+        }
+        private void ShowStudentCourses() // Метод для показа курсов студента
+        {
+            try
+            {
+                ShowAllStudents();
+                Console.Write("Введите ID студента: ");
+                if (!int.TryParse(Console.ReadLine(), out int studentId))
+                    throw new ArgumentException("Некорректный ID студента");
+
+                var student = universManager.FindStudentById(studentId);
+                if (student == null)
+                    throw new ArgumentException("Студент не найден");
+
+                Console.WriteLine($"Курсы студента {student.Name}:");
+                Console.WriteLine(student.GetCoursesInfo());
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Ошибка: {ex.Message}");
+            }
+            Console.WriteLine("\nНажмите любую клавишу для продолжения...");
+            Console.ReadKey();
+        }
+        private void ShowCourseStudents() // Метод для показа студентов курса
+        {
+            try
+            {
+                ShowAllCourse();
+                Console.Write("Введите код курса: ");
+                string courseCode = Console.ReadLine();
+
+                var course = universManager.FindCourseByCode(courseCode);
+                if (course == null)
+                    throw new ArgumentException("Курс не найден");
+
+                Console.WriteLine($"Студенты курса {course.CourseName}:");
+                var students = course.EnrolledStudents;
+                if (students.Count == 0)
+                {
+                    Console.WriteLine("На курсе нет студентов.");
+                }
+                else
+                {
+                    foreach (var student in students)
+                    {
+                        Console.WriteLine(student.GetBasicInfo());
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Ошибка: {ex.Message}");
+            }
+            Console.WriteLine("\nНажмите любую клавишу для продолжения...");
+            Console.ReadKey();
         }
 
     }
@@ -327,7 +620,7 @@ namespace UniversityManagementSystem
         {
             // Создание и запуск консольного интерфейса
             var consoleInterface = new ConsoleInterface();
-
+            consoleInterface.Run();
         }
     }
 }
