@@ -9,12 +9,9 @@ namespace UniversityManagementSystem
         private string email;
         public Person(string name, int age, string email) //конструктор класса
         {
-            if(string.IsNullOrEmpty(name))
-                throw new ArgumentException("Имя не должно быть пустым");
-            if(age < 0 || age > 100)
-                throw new ArgumentException("Взраст должен быть не меньше 0 и не больше 100");
-            if (string.IsNullOrEmpty(email))
-                throw new ArgumentException("email не должен быть пустым");
+            if(string.IsNullOrEmpty(name)) throw new ArgumentException("Имя не должно быть пустым");
+            if(age < 0 || age > 100) throw new ArgumentException("Взраст должен быть не меньше 0 и не больше 100");
+            if (string.IsNullOrEmpty(email)) throw new ArgumentException("email не должен быть пустым");
             this.name = name;
             this.age = age;
             this.email = email;
@@ -59,8 +56,7 @@ namespace UniversityManagementSystem
 
         public void EnrollInCourse(Course course) //Метод для записи на курс
         {
-            if(course == null)
-                throw new ArgumentNullException(nameof(course));
+            if(course == null) throw new ArgumentNullException(nameof(course));
             if (!enrolledCourses.Contains(course))
             {
                 enrolledCourses.Add(course);
@@ -82,8 +78,7 @@ namespace UniversityManagementSystem
         }
         public string GetCoursesInfo() // Метод для получения информации о курсах студента
         {
-            if (enrolledCourses.Count == 0)
-                return "Студент не записан на курсы";
+            if (enrolledCourses.Count == 0) return "Студент не записан на курсы";
             return string.Join(", ", enrolledCourses.Select(c => c.CourseName));
         }
     }
@@ -97,8 +92,7 @@ namespace UniversityManagementSystem
         private string departament;
         public Teacher(string name, int age, string email, string departament) : base(name,age,email)
         {
-            if (string.IsNullOrEmpty(departament)) 
-                throw new ArgumentNullException("Кафедра не может быть пустой");
+            if (string.IsNullOrEmpty(departament)) throw new ArgumentNullException("Кафедра не может быть пустой");
             teacherId = nextId++;
             this.departament = departament;
             teachingCourses = new List<Course>();
@@ -108,8 +102,7 @@ namespace UniversityManagementSystem
         public string Departament => departament;
         public void AssignToCourse(Course course) // Метод для назначения на курс
         {
-            if (course == null)
-                throw new ArgumentNullException(nameof(course));
+            if (course == null) throw new ArgumentNullException(nameof(course));
             if (!teachingCourses.Contains(course))
             {
                 teachingCourses.Add(course);
@@ -127,63 +120,76 @@ namespace UniversityManagementSystem
         }
         public override string GetInfo() //Переопределение абстрактного метода 
         {
-            return $"{GetBasicInfo()}, ID: {TeacherId}, Кафедра: {Department}, Количество курсов: {teachingCourses.Count}";
+            return $"{GetBasicInfo()}, ID: {TeacherId}, Кафедра: {Departament}, Количество курсов: {teachingCourses.Count}";
         }
     }
 
     public class Course // класс курсов
     {
-        
-        public void AddStudent() //Метод для добавления студента
+        private string courseName;
+        private string courseCode;
+        private int maxStudents;
+        private List<Student> enrolledStudents;
+        private Teacher assignedTeacher;
+        private static int nextCode = 100;
+        public Course(string courseName, int maxStudents)
         {
-
+            if (string.IsNullOrEmpty(courseName)) throw new ArgumentNullException("Название курса не может быть пустым");
+            if (maxStudents < 0) throw new ArgumentException("Максимальное количество студентов должно быть положительным");
+            this.courseName = courseName;
+            this.maxStudents = maxStudents;
+            this.courseCode = $"CS{nextCode++}";
+            enrolledStudents = new List<Student>();
+            assignedTeacher = null;
         }
-        public void RemoveStudent() // Метод для удаления студента
+        // Свойства только для чтения
+        public string CourseName => courseName;
+        public string CourseCode => courseCode;
+        public int MaxStudents => maxStudents;
+        public int CurrentStudents => enrolledStudents.Count;
+        public bool IsFull => CurrentStudents >= MaxStudents;
+        public Teacher AssignedTeacher => assignedTeacher;
+        public IReadOnlyList<Student> EnrolledStudents => enrolledStudents.AsReadOnly();
+        public void AddStudent(Student student) //Метод для добавления студента
         {
+            if (student == null)
+                throw new ArgumentNullException(nameof(student));
 
+            if (IsFull)
+                throw new InvalidOperationException("Курс заполнен");
+
+            if (!enrolledStudents.Contains(student))
+            {
+                enrolledStudents.Add(student);
+            }
         }
-        public void AssignTeacher() // Метод для назначения преподавателя
+        public void RemoveStudent(Student student) // Метод для удаления студента
         {
+            if (student != null && enrolledStudents.Contains(student))
+            {
+                enrolledStudents.Remove(student);
+            }
+        }
+        public void AssignTeacher(Teacher teacher) // Метод для назначения преподавателя
+        {
+            if (teacher == null) throw new ArgumentNullException(nameof(teacher));
 
+            assignedTeacher = teacher;
         }
         public void RemoveTeacher() //Метод для удаления преподавателя
         {
-
+            assignedTeacher = null;
         }
         public string GetCourseInfo() //Метод для получения информации о курсе
         {
-
+            string teacherInfo = assignedTeacher != null ? assignedTeacher.Name : "Не назначен";
+            return $"Курс: {CourseName} ({CourseCode}), Преподаватель: {teacherInfo}, Студентов: {CurrentStudents}/{MaxStudents}";
         }
     }
 
     public class UniversManager //основной класс для управления системы университета
     {
-
-        public UniversManager()
-        {
-
-        }
-
-        public void AddStudent() // Методы для добавления сущностей
-        {
-
-        }
-        public void AddTeacher()
-        {
-
-        }
-        public void AddCourse()
-        {
-
-        }
-        public Student FindStudentById() //Метод для поиска студента по ID
-        {
-
-        }
-        public Teacher FindTeacherById() // Метод для поиска преподавателя по ID
-        {
-
-        }
+        
         public Course FindCourseByCode() // Метод для поиска курса по коду
         {
 
