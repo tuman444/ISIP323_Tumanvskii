@@ -149,7 +149,42 @@ namespace UniversityManagementSystem
 
         }
 
-       
+        public void Run() //Основной метод запуска интерфейса
+        {
+
+        }
+        private void ShowMainMenu() // Метод для отображения главного меню
+        {
+
+        }
+        private int GetUserChoice() // Метод для получения выбора пользователя
+        {
+
+        }
+        private void AddStudent() //Метод для добавления студента
+        {
+
+        }
+        private void AddTeacher() // Метод для добавления преподавателя
+        {
+
+        }
+        private void AddCourse() // Метод для добавления курса
+        {
+
+        }
+        private void ShowAllStudents() 
+        { 
+
+        }//Метод для отображения всех студентов
+        private void ShowAllTeachers() // Метод для отображения всех преподавателей
+        {
+
+        }
+        private void ShowAllCourse() // Метод для отображения всех курсов
+        {
+            
+        }
 
     }
 
