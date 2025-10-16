@@ -16,8 +16,12 @@
     {
 
     }
-    public class Player
+    public class Player // класс игрока
     {
 
+    }
+    public class Enemy
+    {
+        
     }
 }
