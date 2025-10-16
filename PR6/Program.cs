@@ -12,4 +12,8 @@
     {
 
     }
+    public class Potion : Item //класс лечебного зелья
+    {
+
+    }
 }
