@@ -8,4 +8,8 @@
     {
 
     }
+    public class Armor : Item // класс оружия
+    {
+
+    }
 }
