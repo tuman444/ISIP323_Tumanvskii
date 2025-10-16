@@ -4,4 +4,8 @@
     {
 
     }
+    public class Weapon : Item //класс оружия
+    {
+
+    }
 }
