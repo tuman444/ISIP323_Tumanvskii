@@ -20,8 +20,21 @@
     {
 
     }
-    public class Enemy
+    public abstract class Enemy // класс врагов
+    {
+
+    }
+    public class Goblin : Enemy // класс врагов гоблин, скелет и маг с наледием от главного класса врагов
+    { 
+
+    }
+    public class Skeleton : Enemy 
     {
         
     }
+    public class Mage : Enemy
+    {
+
+    }
+
 }
