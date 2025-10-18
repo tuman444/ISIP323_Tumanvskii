@@ -2,19 +2,52 @@
 {
     public abstract class Item // класс для всех предметов
     {
-
+        public string Name { get; protected set; }
+        public Item (string name)
+        {
+            Name = name;
+        }
+        public abstract void Use(Player player);
     }
     public class Weapon : Item //класс оружия
     {
-
+        public int Damage {  get; private set; }
+        public  Weapon(string name, int damage) : base (name)
+        {
+            Damage = damage;
+        }
+        public override void Use(Player player)
+        {
+            player.EquipWeapon(this);
+        }
     }
     public class Armor : Item // класс оружия
     {
+        public int Defense { get; private set; }
 
+        public Armor(string name, int defense) : base(name)
+        {
+            Defense = defense;
+        }
+
+        public override void Use(Player player)
+        {
+            player.EquipArmor(this);
+        }
     }
     public class Potion : Item //класс лечебного зелья
     {
+        public int HealAmount { get; private set; }
 
+        public Potion(string name, int healAmount) : base(name)
+        {
+            HealAmount = healAmount;
+        }
+
+        public override void Use(Player player)
+        {
+            player.Heal(HealAmount);
+        }
     }
     public class Player // класс игрока
     {
@@ -56,11 +89,11 @@
     {
 
     }
-    public class Chest
+    public class Chest // класс сундука
     {
 
     }
-    public class Game
+    public class Game //главный класс игры
     {
 
     }
