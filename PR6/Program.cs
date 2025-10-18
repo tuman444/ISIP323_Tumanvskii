@@ -36,5 +36,24 @@
     {
 
     }
+    public abstract class Boss : Enemy //босс
+    {
 
+    } 
+    public class VVG : Goblin // конкретные боссы
+    {
+
+    } 
+    public class Kovalsky : Skeleton
+    {
+
+    }
+    public class ArchmageCPP : Mage
+    {
+
+    }
+    public class PestovC : Skeleton
+    {
+
+    }
 }
