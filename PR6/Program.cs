@@ -186,11 +186,31 @@
     }
     public class Chest // класс сундука
     {
+        public Item Open()
+        {
 
+        }
     }
     public class Game //главный класс игры
     {
+        private Player player;
+        private Random random;
+        private int turnCount;
 
+        public Game()
+        {
+            player = new Player(100);
+            random = new Random();
+            turnCount = 0;
+        }
+
+        public void StartGame() { }
+        public void ProcessTurn() { }
+        public void StartBattle(Enemy enemy) { }
+        public void OpenChest() { }
+        public Enemy GenerateRandomEnemy() { return null; }
+        public Enemy GenerateRandomBoss() { return null; }
+        public void ShowPlayerStatus() { }
     }
     class Program
     {
