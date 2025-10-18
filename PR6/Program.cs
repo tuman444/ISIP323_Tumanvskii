@@ -56,4 +56,19 @@
     {
 
     }
+    public class Chest
+    {
+
+    }
+    public class Game
+    {
+
+    }
+    class Program
+    {
+        static void Main(string[] args)
+        {
+
+        }
+    }
 }
