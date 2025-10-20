@@ -8,8 +8,12 @@
             Name = name;
         }
         public abstract void Use(Player player);
+        public virtual string GetInfo()
+        { 
+            return Name; 
+        }
     }
-    public class Weapon : Item //класс доспех
+    public class Weapon : Item //класс оружия
     {
         public int Damage { get; private set; }
         public Weapon(string name, int damage) : base(name)
@@ -20,8 +24,12 @@
         {
             player.EquipWeapon(this);
         }
+        public override string GetInfo()
+        {
+            return $"{Name} (Урон: {Damage}";
+        }
     }
-    public class Armor : Item // класс оружия
+    public class Armor : Item // класс брони
     {
         public int Defense { get; private set; }
 
@@ -29,10 +37,13 @@
         {
             Defense = defense;
         }
-
         public override void Use(Player player)
         {
             player.EquipArmor(this);
+        }
+        public override string GetInfo()
+        {
+            return $"{Name} (Защита: {Defense})";
         }
     }
     public class Potion : Item //класс лечебного зелья
@@ -48,6 +59,10 @@
         {
             player.Heal(HealAmount);
         }
+        public override string GetInfo()
+        {
+            return $"{Name} (Восстановление: {HealAmount} HP)";
+        }
     }
     public class Player // класс игрока
     {
@@ -57,22 +72,94 @@
         public Armor CurrentArmor { get; private set; }
         public bool IsFrozen { get; set; }
         public bool IsDefending { get; set; }
+        private Random random;
 
         public Player(int maxHP)
         {
             MaxHP = maxHP;
             HP = maxHP;
+            random = new Random();
             // Стартовое снаряжение
             CurrentWeapon = new Weapon("Кулаки", 5);
             CurrentArmor = new Armor("Одежда", 2);
         }
 
-        public void Attack(Enemy enemy) { }
-        public void Defend() { }
-        public void TakeDamage(int damage, bool ignoreArmor = false) { }
-        public void Heal(int amount) { }
-        public void EquipWeapon(Weapon weapon) { }
-        public void EquipArmor(Armor armor) { }
+        public void Attack(Enemy enemy) 
+        {
+            if (IsFrozen)
+            {
+                Console.WriteLine("Игрок заморожен и пропускает ход!");
+                IsFrozen = false;
+                return;
+            }
+
+            int damage = CurrentWeapon.Damage;
+            enemy.TakeDamage(damage);
+            Console.WriteLine($"Вы атаковали {enemy.Name} и нанесли {damage} урона!");
+        }
+        public void Defend() 
+        {
+            if (IsFrozen)
+            {
+                Console.WriteLine("Игрок заморожен и пропускает ход!");
+                IsFrozen = false;
+                return;
+            }
+            IsDefending = true;
+            Console.WriteLine("Вы приготовились к защите!");
+        }
+        public void TakeDamage(int damage, bool ignoreArmor = false) 
+        {
+            if (IsDefending)
+            {
+                // 40% шанс уклониться
+                if (random.NextDouble() < 0.4)
+                {
+                    Console.WriteLine("Вы увернулись от атаки!");
+                    IsDefending = false;
+                    return;
+                }
+
+                // Блокирование урона
+                if (!ignoreArmor)
+                {
+                    double blockPercent = 0.7 + (random.NextDouble() * 0.3); // 70-100%
+                    int blockedDamage = (int)(CurrentArmor.Defense * blockPercent);
+                    damage = Math.Max(0, damage - blockedDamage);
+                    Console.WriteLine($"Вы заблокировали {blockedDamage} урона!");
+                }
+
+                IsDefending = false;
+            }
+
+            HP -= damage;
+            HP = Math.Max(0, HP);
+            Console.WriteLine($"Вы получили {damage} урона. Осталось HP: {HP}");
+        }
+        public void Heal(int amount) 
+        {
+            HP = Math.Min(MaxHP, HP + amount);
+            Console.WriteLine($"Вы восстановили {amount} HP. Теперь HP: {HP}");
+        }
+        public void EquipWeapon(Weapon weapon) 
+        {
+            CurrentWeapon = weapon;
+            Console.WriteLine($"Экипировано оружие: {weapon.GetInfo()}");
+        }
+        public void EquipArmor(Armor armor) 
+        {
+            CurrentArmor = armor;
+            Console.WriteLine($"Экипированы доспехи: {armor.GetInfo()}");
+        }
+        public bool IsAlive() => HP > 0;
+        public void ShowStatus()
+        {
+            Console.WriteLine($"=== Статус игрока ===");
+            Console.WriteLine($"HP: {HP}/{MaxHP}");
+            Console.WriteLine($"Оружие: {CurrentWeapon.GetInfo()}");
+            Console.WriteLine($"Доспехи: {CurrentArmor.GetInfo()}");
+            Console.WriteLine($"=====================");
+        }
     }
     public abstract class Enemy // класс врагов
     {
