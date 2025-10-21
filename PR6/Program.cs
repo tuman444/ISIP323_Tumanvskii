@@ -83,7 +83,6 @@
             CurrentWeapon = new Weapon("Кулаки", 5);
             CurrentArmor = new Armor("Одежда", 2);
         }
-
         public void Attack(Enemy enemy) 
         {
             if (IsFrozen)
@@ -263,22 +262,11 @@
     }
     public class VVG : Goblin // конкретные боссы
     {
-            public VVG() : base("ВВГ", 100, 15, 12, 0.3)
-            {
-
-            }
-        public override void PerformAttack(Player player)
-        {
-            // Ковальский сохраняет способность скелета игнорировать защиту
-            player.TakeDamage(Attack, ignoreArmor: true);
-        }
+        public VVG() : base("ВВГ", 100, 15, 12, 0.3) { }
     }
     public class Kovalsky : Skeleton
         {
-            public Kovalsky() : base("Ковальский", 125, 13, 14)
-            {
-
-            }
+            public Kovalsky() : base("Ковальский", 125, 13, 14) { }
 
     }
     public class ArchmageCPP : Mage
@@ -290,19 +278,28 @@
     {
         public double FreezeChance { get; private set; }
 
-        public PestovC() : base("Пестов С", 65, 18, 6)
+        public PestovC() : base("Пестов С--", 65, 18, 6)
         {
-            FreezeChance = 0.2;
+            FreezeChance = 0.3;
         }
 
         public override void PerformAttack(Player player)
         {
             player.TakeDamage(Attack, ignoreArmor: true);
+            Console.WriteLine($"{Name} игнорирует вашу защиту!");
         }
 
         public override void SpecialAbility(Player player)
         {
-
+            if(random.NextDouble() < FreezeChance)
+            {
+                player.IsFrozen = true;
+                Console.WriteLine($"{Name} замораживает вас своей ледяной магией! Вы пропустите следующий ход.");
+            }
+        }
+        public override string GetInfo()
+        {
+            return base.GetInfo() + $", Заморозка: {FreezeChance * 100}%";
         }
     }
     public class Chest // класс сундука
