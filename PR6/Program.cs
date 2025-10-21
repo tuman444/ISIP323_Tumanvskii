@@ -165,8 +165,10 @@
     {
         public string Name { get; protected set; }
         public int HP { get; protected set; }
+        public int MaxHP { get; protected set; }
         public int Attack { get; protected set; }
         public int Defense { get; protected set; }
+        protected Random random;
         public Enemy(string name, int hp, int attack, int defense)
         {
             Name = name;
@@ -177,8 +179,17 @@
 
         public abstract void PerformAttack(Player player);
         public abstract void SpecialAbility(Player player);
-        public void TakeDamage(int damage) { }
+        public void TakeDamage(int damage) 
+        {
+            HP -= damage;
+            HP = Math.Max(0, HP);
+            Console.WriteLine($"{Name} получил {damage} урона. Осталось HP: {HP}");
+        }
         public bool IsAlive() { return HP > 0; }
+        public virtual string GetInfo()
+        {
+            return $"{Name} (HP: {HP}/{MaxHP}, Атака: {Attack}, Защита: {Defense})";
+        }
     }
     public class Goblin : Enemy // класс врагов гоблин, скелет и маг с наледием от главного класса врагов
     {
@@ -188,19 +199,35 @@
         {
             CritChance = critChance;
         }
+        public Goblin() : this("Гоблин", 30, 8, 5, 0.2) { }
 
-        public override void PerformAttack(Player player) { }
+        public override void PerformAttack(Player player) 
+        {
+            int damage = Attack;
+
+            if (random.NextDouble() < CritChance) 
+            {
+                damage *= 2;
+                Console.WriteLine($"{Name} наносит критический удар!");
+            }
+            player.TakeDamage(damage);
+        }
         public override void SpecialAbility(Player player) { }
+        public override string GetInfo()
+        {
+            return base.GetInfo() + $", Крит: {CritChance * 100}%";
+        }
     }
     public class Skeleton : Enemy
     {
         public Skeleton(string name, int hp, int attack, int defense)
                     : base(name, hp, attack, defense) { }
-
+        public Skeleton() : this("Скелет", 50, 10, 3) { }
         public override void PerformAttack(Player player)
         {
         
             player.TakeDamage(Attack, ignoreArmor: true);
+            Console.WriteLine($"{Name} игнорирует вашу защиту!");
         }
 
         public override void SpecialAbility(Player player)
@@ -216,15 +243,22 @@
         {
             FreezeChance = freezeChance;
         }
-
-        public override void PerformAttack(Player player) { }
-        public override void SpecialAbility(Player player) { }
-    }
-    public abstract class Boss : Enemy //босс
-    {
-        public Boss(string name, int hp, int attack, int defense) : base(name, hp, attack, defense)
+        public Mage() : this("Маг", 20, 12, 2, 0.15) { }
+        public override void PerformAttack(Player player) 
         {
-
+            player.TakeDamage(Attack);  
+        }
+        public override void SpecialAbility(Player player) 
+        {
+            if (random.NextDouble() < FreezeChance) 
+            {
+                player.IsFrozen = true;
+                Console.WriteLine($"{Name} замораживает вас! Вы пропустите следующий ход");
+            }    
+        }
+        public override string GetInfo()
+        {
+            return base.GetInfo() + $", Заморозка: {FreezeChance * 100}%";
         }
     }
     public class VVG : Goblin // конкретные боссы
