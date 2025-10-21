@@ -304,11 +304,23 @@
     }
     public class Chest // класс сундука
     {
-        public Item Open()
+        private Random random;
+        private List<Item> possibleItems;
+        public Chest()
         {
-
+            random = new Random();
+            possibleItems = new List<Item>
+            {
+                new Potion("Лечебное зелье", 30),
+                new Potion("Большое зелье", 50),
+                new Weapon("Меч", 10),
+                new Weapon("Топор", 12),
+                new Weapon("Магический посох", 8),
+                new Armor("Кожаные доспехи", 5),
+                new Armor("Кольчуга", 8),
+                new Armor("Латные доспехи", 12)
+            };
         }
-    }
     public class Game //главный класс игры
     {
         private Player player;
