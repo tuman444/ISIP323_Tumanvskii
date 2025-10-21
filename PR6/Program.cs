@@ -373,28 +373,26 @@
             Console.WriteLine($"\n=== Ход {currentTurn} ===");
             player.ShowStatus();
 
-            // Случайное событие: 50% сундук, 50% враг
-            if (random.NextDouble() < 0.5)
+            // Босс каждые 10 ходов 
+            if (currentTurn % 10 == 0)
             {
-                OpenChest();
+                Enemy boss = GenerateRandomBoss();
+                Console.WriteLine($"!!! ВАМ ПОПАЛСЯ БОСС: {boss.GetInfo()} !!!");
+                StartBattle(boss);
             }
             else
             {
-                Enemy enemy;
-
-                // Босс каждые 10 ходов (10, 20, 30...)
-                if (currentTurn % 10 == 0)
+                // Случайное событие: 50% сундук, 50% враг
+                if (random.NextDouble() < 0.5)
                 {
-                    enemy = GenerateRandomBoss();
-                    Console.WriteLine($"!!! ВАМ ПОПАЛСЯ БОСС: {enemy.GetInfo()} !!!");
+                    OpenChest();
                 }
                 else
                 {
-                    enemy = GenerateRandomEnemy();
+                    Enemy enemy = GenerateRandomEnemy();
                     Console.WriteLine($"Перед вами: {enemy.GetInfo()}");
+                    StartBattle(enemy);
                 }
-
-                StartBattle(enemy);
             }
 
             if (player.IsAlive())
@@ -483,6 +481,7 @@
                 0 => new Goblin(),
                 1 => new Skeleton(),
                 2 => new Mage(),
+                _ => new Goblin()
             };
         }
         public Enemy GenerateRandomBoss() 
@@ -493,7 +492,8 @@
                 0 => new VVG(),
                 1 => new Kovalsky(),
                 2 => new ArchmageCPP(),
-                3 => new PestovC()
+                3 => new PestovC(),
+                _ => new VVG()
             };
         }
     }
