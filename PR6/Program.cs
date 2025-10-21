@@ -172,6 +172,7 @@
         {
             Name = name;
             HP = hp;
+            MaxHP = hp;
             Attack = attack;
             Defense = defense;
             random = new Random();  
@@ -337,12 +338,13 @@
 
         public Game()
         {
-            player = new Player(100);
+            player = new Player(1000);
             random = new Random();
             turnCount = 0;
             gameRunning = true;
         }
-        public void StartGame() 
+
+        public void StartGame()
         {
             Console.WriteLine("Добро пожаловать в текстовый рогалик!");
             Console.WriteLine("Каждый ход вы будете встречать либо сундук, либо врага.");
@@ -352,23 +354,26 @@
             while (gameRunning && player.IsAlive())
             {
                 ProcessTurn();
-                turnCount++;
+                turnCount++;  
             }
+
             if (!player.IsAlive())
             {
                 Console.WriteLine("Игра окончена! Вы погибли...");
             }
             else
             {
-                Console.WriteLine("Игра завершена! Спасибо за игру");
+                Console.WriteLine("Игра завершена. Спасибо за игру!");
             }
         }
-        public void ProcessTurn() 
+
+        public void ProcessTurn()
         {
             int currentTurn = turnCount + 1;
             Console.WriteLine($"\n=== Ход {currentTurn} ===");
             player.ShowStatus();
 
+            // Случайное событие: 50% сундук, 50% враг
             if (random.NextDouble() < 0.5)
             {
                 OpenChest();
@@ -376,7 +381,9 @@
             else
             {
                 Enemy enemy;
-                if(currentTurn % 10 == 0)
+
+                // Босс каждые 10 ходов (10, 20, 30...)
+                if (currentTurn % 10 == 0)
                 {
                     enemy = GenerateRandomBoss();
                     Console.WriteLine($"!!! ВАМ ПОПАЛСЯ БОСС: {enemy.GetInfo()} !!!");
@@ -386,8 +393,10 @@
                     enemy = GenerateRandomEnemy();
                     Console.WriteLine($"Перед вами: {enemy.GetInfo()}");
                 }
+
                 StartBattle(enemy);
             }
+
             if (player.IsAlive())
             {
                 Console.WriteLine("\nНажмите любую клавишу для продолжения...");
