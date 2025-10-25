@@ -10,6 +10,7 @@ namespace CarServiceDB
     {
         static void Main(string[] args)
         {
+
         }
     }
 }
