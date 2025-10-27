@@ -11,9 +11,22 @@ namespace CarServiceGame
 {
     public static class GameManager 
     {
+        private static Random _random = new Random();
+
         public static void InitializeGame() //Метод для первоначальной проверки и настройки игры
         {
-
+            Console.WriteLine("Добро пожаловать в Ваш Автосервис!");
+            
+            if (!Core.Context.GameStatus.Any())
+            {
+                Console.WriteLine("ОШИБКА: База данных не заполнена! Заполните GameStatus.");
+                Environment.Exit(1);
+            }
+            if (!Core.Context.PartTypes.Any())
+            {
+                Console.WriteLine("ОШИБКА: В базе нет ни одной запчасти (PartTypes)!");
+                Environment.Exit(1);
+            }
         }
         public static void UpdateDeliveries() // Обновление отложенных поставок
         {
