@@ -56,6 +56,7 @@ namespace CarServiceGame
                         //  добавляем новую запись
                         Core.Context.WarehouseItems.Add(new WarehouseItems
                         {
+                            
                             PartTypeID = delivery.PartTypeID,
                             Quantity = delivery.Quantity
                         });

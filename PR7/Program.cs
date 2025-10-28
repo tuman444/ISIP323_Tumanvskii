@@ -37,15 +37,16 @@ namespace CarServiceDB
                     Console.ReadLine();
                 }
             }
+            
             catch (Exception ex)
             {
-                // Задание: "Программа не должна вылетать в процессе работы"
                 Console.ForegroundColor = ConsoleColor.DarkRed;
                 Console.WriteLine("\n!!! КРИТИЧЕСКАЯ ОШИБКА !!!");
                 Console.WriteLine(ex.Message);
-                Console.WriteLine("Программа будет завершена.");
+                Console.WriteLine("Программа будет завершена. Обратитесь к разработчику.");
                 Console.ResetColor();
             }
+        
 
             Console.WriteLine("Нажмите Enter для выхода...");
             Console.ReadLine();
