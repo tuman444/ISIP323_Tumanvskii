@@ -138,8 +138,73 @@ namespace CarServiceGame
         }
         public static void ShowShop() // Показ меню магазина для закупки деталей
         {
+            Console.WriteLine("\nХотите зайти в магазин запчастей? (y/n)");
+            if (Console.ReadLine().ToLower() != "y")
+            {
+                return;
+            }
+            var game = Core.Context.GameStatus.First();
+            Console.ForegroundColor = ConsoleColor.Cyan;
+            Console.WriteLine("\n[--- МАГАЗИН ЗАПЧАСТЕЙ ---]");
+            Console.WriteLine($"Ваш баланс: {game.Balance:C}");
 
+            var allParts = Core.Context.PartTypes.ToList();
+            foreach (var part in allParts)
+            {
+                Console.WriteLine($"{part.PartTypeID}. {part.Name} - {part.ShopPrice:C} / шт.");
+            }
+            Console.WriteLine("0. Выйти из магазина");
+
+            while (true)
+            {
+                Console.Write("Введите ID детали для покупки (или 0): ");
+                if (!int.TryParse(Console.ReadLine(), out int partId) || partId == 0)
+                {
+                    break;
+                }
+
+                var partToBuy = allParts.FirstOrDefault(p => p.PartTypeID == partId);
+                if (partToBuy == null)
+                {
+                    Console.WriteLine("Такой детали нет!");
+                    continue;
+                }
+
+                Console.Write($"Сколько '{partToBuy.Name}' хотите купить? ");
+                if (!int.TryParse(Console.ReadLine(), out int quantity) || quantity <= 0)
+                {
+                    Console.WriteLine("Неверное количество.");
+                    continue;
+                }
+
+                decimal totalCost = partToBuy.ShopPrice * quantity;
+                if (game.Balance < totalCost)
+                {
+                    Console.WriteLine($"Недостаточно денег! Нужно {totalCost:C}, у вас {game.Balance:C}");
+                    continue;
+                }
+
+                // Покупка
+                game.Balance -= totalCost;
+
+                // Добавляем в отложенную поставку
+                Core.Context.PendingDeliveries.Add(new PendingDeliveries
+                {
+                    PartTypeID = partToBuy.PartTypeID,
+                    Quantity = quantity,
+                    ClientsToWait = 2 // Поставка прибудет через 2 клиента
+                });
+
+                Core.Context.SaveChanges();
+                Console.WriteLine($"\nУспешно куплено: {partToBuy.Name} (x{quantity}) за {totalCost:C}");
+                Console.WriteLine("Поставка прибудет через 2-х клиентов.");
+                Console.WriteLine($"Остаток баланса: {game.Balance:C}");
+            }
+
+            Console.WriteLine("[--- Выход из магазина ---]");
+            Console.ResetColor();
         }
+        
         public static bool CheckGameOver() // Проверка условия проигрыша
         {
             return true;
