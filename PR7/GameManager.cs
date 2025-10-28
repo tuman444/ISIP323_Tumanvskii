@@ -207,7 +207,26 @@ namespace CarServiceGame
         
         public static bool CheckGameOver() // Проверка условия проигрыша
         {
-            return true;
+            var game = Core.Context.GameStatus.First();
+            var totalParts = Core.Context.WarehouseItems.Sum(w => (int?)w.Quantity) ?? 0;
+
+            // Если нет деталей, проверяем, можем ли мы купить самую дешевую
+            if (totalParts == 0)
+            {
+                decimal cheapestPartPrice = Core.Context.PartTypes.Min(p => p.ShopPrice);
+                if (game.Balance < cheapestPartPrice)
+                {
+                    Console.ForegroundColor = ConsoleColor.Red;
+                    Console.WriteLine("\n================== ИГРА ОКОНЧЕНА ==================");
+                    Console.WriteLine("У вас не осталось запчастей на складе и не хватает денег,");
+                    Console.WriteLine($"чтобы купить даже самую дешевую деталь ({cheapestPartPrice:C}).");
+                    Console.WriteLine($"Ваш финальный баланс: {game.Balance:C}");
+                    Console.WriteLine("====================================================");
+                    Console.ResetColor();
+                    return true;
+                }
+            }
+            return false;
         }
     }
 }
