@@ -42,12 +42,10 @@ namespace CarServiceGame
                 delivery.ClientsToWait--;
                 if (delivery.ClientsToWait <= 0)
                 {
-                    // Поставка прибыла!
-                    var warehouseItem = Core.Context.WarehouseItems
-                        .FirstOrDefault(w => w.PartTypeID == delivery.PartTypeID);
+                    // Поставка прибыла
+                    var warehouseItem = Core.Context.WarehouseItems.FirstOrDefault(w => w.PartTypeID == delivery.PartTypeID);
 
-                    var partName = Core.Context.PartTypes
-                        .First(p => p.PartTypeID == delivery.PartTypeID).Name;
+                    var partName = Core.Context.PartTypes.First(p => p.PartTypeID == delivery.PartTypeID).Name;
 
                     if (warehouseItem != null)
                     {
@@ -55,7 +53,7 @@ namespace CarServiceGame
                     }
                     else
                     {
-                        // Этой запчасти у нас не было, добавляем новую запись
+                        //  добавляем новую запись
                         Core.Context.WarehouseItems.Add(new WarehouseItems
                         {
                             PartTypeID = delivery.PartTypeID,
@@ -70,10 +68,73 @@ namespace CarServiceGame
             Console.WriteLine("[-----------------------------]");
             Console.ResetColor();
         }
-        }
+        
         public static void ProcessClientTurn() // обработка одного хода
         {
+            var game = Core.Context.GameStatus.First();
+            Console.WriteLine($"\n--- Новый клиент! --- Ваш баланс: {game.Balance:C}");
 
+            int maxPartId = Core.Context.PartTypes.Max(p => p.PartTypeID);
+            int randomPartId = _random.Next(1, maxPartId + 1);
+
+            var neededPart = Core.Context.PartTypes.First(p => p.PartTypeID == randomPartId);
+
+            decimal repairCost = neededPart.ShopPrice + neededPart.LaborCost;
+            decimal penaltyRefuse = neededPart.ShopPrice * 0.5m; // Штраф за отказ (пример)
+            decimal penaltyFail = repairCost * 1.5m; // Штраф за "критическую ошибку" (пример)
+
+            Console.WriteLine($"Клиент приехал с поломкой: '{neededPart.Name}'");
+            Console.WriteLine($"Стоимость ремонта для клиента: {repairCost:C} (деталь {neededPart.ShopPrice:C} + работа {neededPart.LaborCost:C})");
+
+            var partInStock = Core.Context.WarehouseItems.FirstOrDefault(w => w.PartTypeID == neededPart.PartTypeID && w.Quantity > 0); // Проверяем наличие на складе
+
+            if (partInStock != null)
+            {
+                Console.WriteLine($"У вас на складе: {partInStock.Quantity} шт.");
+            }
+            else
+            {
+                Console.ForegroundColor = ConsoleColor.Red;
+                Console.WriteLine("У вас на складе НЕТ такой детали!");
+                Console.ResetColor();
+            }
+
+            Console.WriteLine("\nВаши действия:");
+            Console.WriteLine("1. Принять заказ");
+            Console.WriteLine("2. Отказаться от заказа (штраф {0:C})", penaltyRefuse);
+
+            string choice = Console.ReadLine();
+
+            if (choice == "1")
+            {
+                if (partInStock != null)
+                {
+                    partInStock.Quantity--; // УСПЕХ: Деталь есть
+                    game.Balance += repairCost;
+                    Core.Context.SaveChanges();
+                    Console.ForegroundColor = ConsoleColor.Green;
+                    Console.WriteLine($"\nУспешный ремонт! +{repairCost:C}.");
+                    Console.WriteLine($"Деталей '{neededPart.Name}' осталось: {partInStock.Quantity} шт.");
+                    Console.ResetColor();
+                }
+                else
+                {
+                    game.Balance -= penaltyFail;  // КРИТИЧЕСКАЯ ОШИБКА: Детали нет, но заказ приняли
+                    Core.Context.SaveChanges();
+                    Console.ForegroundColor = ConsoleColor.Magenta;
+                    Console.WriteLine($"\nКРИТИЧЕСКИЙ ПРОВАЛ! Вы взяли заказ без детали!");
+                    Console.WriteLine($"Вы заплатили неустойку клиенту: -{penaltyFail:C}");
+                    Console.ResetColor();
+                }
+            }
+            else 
+            {
+                game.Balance -= penaltyRefuse; //отказ от заказа
+                Core.Context.SaveChanges();
+                Console.ForegroundColor = ConsoleColor.Yellow;
+                Console.WriteLine($"\nВы отказались от заказа. Штраф: -{penaltyRefuse:C}");
+                Console.ResetColor();
+            }
         }
         public static void ShowShop() // Показ меню магазина для закупки деталей
         {
