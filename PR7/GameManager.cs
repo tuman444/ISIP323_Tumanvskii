@@ -15,6 +15,7 @@ namespace CarServiceGame
 
         public static void InitializeGame() //Метод для первоначальной проверки и настройки игры
         {
+            Console.ForegroundColor = ConsoleColor.Green;
             Console.WriteLine("Добро пожаловать в Ваш Автосервис!");
             
             if (!Core.Context.GameStatus.Any())
@@ -28,9 +29,47 @@ namespace CarServiceGame
                 Environment.Exit(1);
             }
         }
-        public static void UpdateDeliveries() // Обновление отложенных поставок
+        public static void UpdateDeliveries() // Обновление поставок
         {
+            var deliveries = Core.Context.PendingDeliveries.ToList();
+            if (!deliveries.Any()) return;
 
+            Console.ForegroundColor = ConsoleColor.Cyan;
+            Console.WriteLine("\n[--- Обновление поставок ---]");
+
+            foreach (var delivery in deliveries)
+            {
+                delivery.ClientsToWait--;
+                if (delivery.ClientsToWait <= 0)
+                {
+                    // Поставка прибыла!
+                    var warehouseItem = Core.Context.WarehouseItems
+                        .FirstOrDefault(w => w.PartTypeID == delivery.PartTypeID);
+
+                    var partName = Core.Context.PartTypes
+                        .First(p => p.PartTypeID == delivery.PartTypeID).Name;
+
+                    if (warehouseItem != null)
+                    {
+                        warehouseItem.Quantity += delivery.Quantity;
+                    }
+                    else
+                    {
+                        // Этой запчасти у нас не было, добавляем новую запись
+                        Core.Context.WarehouseItems.Add(new WarehouseItems
+                        {
+                            PartTypeID = delivery.PartTypeID,
+                            Quantity = delivery.Quantity
+                        });
+                    }
+                    Console.WriteLine($"Прибыла поставка: {partName} (x{delivery.Quantity})!");
+                    Core.Context.PendingDeliveries.Remove(delivery);
+                }
+            }
+            Core.Context.SaveChanges(); // Сохраняем все изменения (и уменьшение счетчика, и удаление)
+            Console.WriteLine("[-----------------------------]");
+            Console.ResetColor();
+        }
         }
         public static void ProcessClientTurn() // обработка одного хода
         {
@@ -42,7 +81,7 @@ namespace CarServiceGame
         }
         public static bool CheckGameOver() // Проверка условия проигрыша
         {
-
+            return true;
         }
     }
 }
