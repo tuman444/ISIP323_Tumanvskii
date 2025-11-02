@@ -25,6 +25,21 @@ namespace MarketPlace
         }
         #endregion
 
+        #region Методы просмотра товаров и корзины
+        private static void ViewProducts() //метод просмотра товаров
+        {
+
+        }
+        private static void AddToCart() // метод добавления товара в корзину
+        {
+
+        }
+        private static void ViewCart() // метод просмотры корзины
+        {
+
+        }
+        #endregion
+
         static void Main(string[] args)
         {
         }
