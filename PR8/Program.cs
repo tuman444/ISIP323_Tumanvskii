@@ -285,17 +285,193 @@ namespace MarketPlace
         #endregion
 
         #region Методы для Заказа
-        private static void CreateOrder() // оформление заказа
+        private static void CreateOrder(System.Collections.Generic.List<CartItems> items, decimal totalPrice) // оформление заказа
         {
+            // Начинаем транзакцию. Либо все операции пройдут, либо ни одной.
+            using (var transaction = Core.Context.Database.BeginTransaction())
+            {
+                try
+                {
+                    // (Блокировка/Проверка)
+                    // Мы должны "перечитать" данные о товарах из БД внутри транзакции
+                    // чтобы убедиться, что их не купил кто-то другой, пока мы смотрели корзину.
+                    foreach (var item in items)
+                    {
+                        var productInDb = Core.Context.Products.Find(item.ProductID);
+                        if (productInDb.StockQuantity < item.Quantity)
+                        {
+                            // Откат
+                            Console.ForegroundColor = ConsoleColor.Red;
+                            Console.WriteLine($"Ошибка: Товара '{productInDb.Name}' не осталось на складе (Остаток: {productInDb.StockQuantity}).");
+                            Console.WriteLine("Заказ отменен.");
+                            transaction.Rollback();
+                            Console.ReadLine();
+                            return;
+                        }
+                    }
 
+                    // Выбор ПВЗ
+                    Console.ForegroundColor = ConsoleColor.Blue;
+                    Console.WriteLine("== Выбор пункта выдачи заказов (ПВЗ) ==");
+                    var pickupPoints = Core.Context.PickupPoints.ToList();
+                    if (!pickupPoints.Any())
+                    {
+                        Console.ForegroundColor = ConsoleColor.Red;
+                        Console.WriteLine("Ошибка: Нет доступных ПВЗ. Заказ невозможен.");
+                        transaction.Rollback();
+                        Console.ReadLine();
+                        return;
+                    }
+
+                    foreach (var p in pickupPoints)
+                    {
+                        Console.ForegroundColor = ConsoleColor.Cyan;
+                        Console.WriteLine($"[ID: {p.PickupPointID}] {p.Address} (Часы работы: {p.OperatingHours})");
+                    }
+
+                    // Выбор
+                    int pickupID = 0;
+                    while (true)
+                    {
+                        Console.ForegroundColor = ConsoleColor.Blue;
+                        Console.Write("Введите ID ПВЗ: ");
+                        if (int.TryParse(Console.ReadLine(), out pickupID) && pickupPoints.Any(p => p.PickupPointID == pickupID))
+                        {
+                            break; // Выбор верный
+                        }
+                        Console.ForegroundColor = ConsoleColor.Red;
+                        Console.WriteLine("Неверный ID. Попробуйте снова.");
+                    }
+
+                    // Создание заказа (Orders)
+                    Orders newOrder = new Orders
+                    {
+                        UserID = currentUser.UserID,
+                        PickupPointID = pickupID,
+                        OrderDate = DateTime.Now,
+                        Status = "В обработке",
+                        TotalPrice = totalPrice
+                    };
+                    Core.Context.Orders.Add(newOrder);
+
+                    // Сохраняем, чтобы получить OrderID
+                    Core.Context.SaveChanges();
+
+                    // Перенос товаров из корзины (items) в OrderItems
+                    foreach (var item in items)
+                    {
+                        // Создаем OrderItem
+                        OrderItems orderItem = new OrderItems
+                        {
+                            OrderID = newOrder.OrderID, // <-- ID из созданного заказа
+                            ProductID = item.ProductID,
+                            Quantity = item.Quantity,
+                            PriceAtPurchase = item.Products.Price // <-- Цена на момент покупки
+                        };
+                        Core.Context.OrderItems.Add(orderItem);
+
+                        // Уменьшаем остаток на складе
+                        var productToUpdate = Core.Context.Products.Find(item.ProductID);
+                        productToUpdate.StockQuantity -= item.Quantity;
+                    }
+
+                    // Очистить корзину пользователя
+                    Core.Context.CartItems.RemoveRange(items);
+
+                    // Сохраняем все изменения (OrderItems, Склад) и Подтверждаем транзакцию
+                    Core.Context.SaveChanges();
+                    transaction.Commit();
+
+                    // Успех
+                    Console.ForegroundColor = ConsoleColor.Green;
+                    Console.WriteLine($"Заказ №{newOrder.OrderID} успешно создан!");
+                    Console.ReadLine();
+                }
+                catch (Exception ex)
+                {
+                    // Если что-то пошло не так на любом этапе - откат
+                    Console.ForegroundColor = ConsoleColor.Red;
+                    Console.WriteLine($"Критическая ошибка при оформлении заказа: {ex.Message}");
+                    transaction.Rollback();
+                    Console.ReadLine();
+                }
+            }
         }
         private static void ViewOrderHistory() // проосмотр истории заказов 
         {
+            Console.Clear();
+            Console.ForegroundColor = ConsoleColor.Blue;
+            Console.WriteLine("== Моя история заказов ==");
 
+            // Получить список заказов пользователя
+            var orders = Core.Context.Orders
+                .Where(o => o.UserID == currentUser.UserID)
+                .OrderByDescending(o => o.OrderDate) // 1. Сортировка по дате (сначала новые)
+                .ToList();
+
+            // Если заказов нет
+            if (!orders.Any())
+            {
+                Console.ForegroundColor = ConsoleColor.Red;
+                Console.WriteLine("У вас пока нет заказов.");
+                Console.ReadLine();
+                return;
+            }
+
+            // Вывести список
+            foreach (var order in orders)
+            {
+                Console.ForegroundColor = ConsoleColor.Green;
+                Console.WriteLine($"Заказ: №{order.OrderID} от {order.OrderDate.ToShortDateString()}");
+                Console.WriteLine($"   Статус: {order.Status}, Сумма: {order.TotalPrice:C}");
+            }
+            Console.WriteLine("-----------------------------------");
+
+            // Детализация заказа
+            Console.ForegroundColor = ConsoleColor.Blue;
+            Console.Write("Введите ID заказа для просмотра деталей (или 0 для возврата): ");
+            if (int.TryParse(Console.ReadLine(), out int orderID) && orderID != 0)
+            {
+                ShowOrderDetails(orderID);
+            }
         }
-        private static void ShowOrderDetails() // Метод для показа деталей конкретного заказа
+        private static void ShowOrderDetails(int orderID) // Метод для показа деталей конкретного заказа
         {
+            // Находим заказ, но только если он принадлежит текущему пользователю
+            var order = Core.Context.Orders
+                .Include(o => o.PickupPoints) // Загружаем связанный ПВЗ
+                .FirstOrDefault(o => o.OrderID == orderID && o.UserID == currentUser.UserID);
 
+            if (order == null)
+            {
+                Console.ForegroundColor = ConsoleColor.Red;
+                Console.WriteLine("Заказ не найден или он вам не принадлежит.");
+                Console.ReadLine();
+                return;
+            }
+
+            Console.Clear();
+            Console.ForegroundColor = ConsoleColor.Blue;
+            Console.WriteLine($"== Детали заказа №{order.OrderID} ==");
+            Console.WriteLine($"Дата: {order.OrderDate}, Статус: {order.Status}, Сумма: {order.TotalPrice:C}");
+            Console.WriteLine($"Пункт выдачи: {order.PickupPoints.Address} ({order.PickupPoints.OperatingHours})");
+            Console.WriteLine();
+            Console.WriteLine("Состав заказа:");
+
+            // Получаем детали (товары)
+            var orderItems = Core.Context.OrderItems
+                .Where(oi => oi.OrderID == orderID)
+                .Include(oi => oi.Products) // Загружаем связанные Товары
+                .ToList();
+
+            // Выводим детали
+            foreach (var item in orderItems)
+            {
+                Console.ForegroundColor = ConsoleColor.Blue;
+                Console.WriteLine($" - {item.Products.Name} (x{item.Quantity} шт. по {item.PriceAtPurchase:C})");
+            }
+
+            Console.ReadLine();
         }
         #endregion
 
