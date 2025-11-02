@@ -478,17 +478,105 @@ namespace MarketPlace
         #region Главный метод вывода меню
         private static void MainLoop() // вывод меню
         {
+            while (true)
+            {
+                // Очищаем консоль для красоты
+                Console.Clear();
 
+                if (currentUser == null)
+                {
+                    // Если пользователь - Гость
+                    ShowGuestMenu();
+                }
+                else
+                {
+                    // Если пользователь авторизован
+                    ShowUserMenu();
+                }
+            }
         }
         private static void ShowGuestMenu() // меню для не зарегистрированого пользователя
         {
+            Console.ForegroundColor= ConsoleColor.Green;
+            Console.WriteLine("Добро пожаловать в маркетплейс WONGG!");
+            Console.WriteLine("1. Войти в аккаунт");
+            Console.WriteLine("2. Зарегистрироваться");
+            Console.WriteLine("3. Просмотреть товары");
+            Console.WriteLine("0. Выйти из программы");
+            Console.Write("Выберите действие: ");
 
+            string choice = Console.ReadLine();
+
+            switch (choice)
+            {
+                case "1":
+                    Login(); // Переход к методу входа
+                    break;
+                case "2":
+                    Register(); // Переход к методу регистрации
+                    break;
+                case "3":
+                    ViewProducts(); // Переход к просмотру товаров
+                    break;
+                case "0":
+                    Environment.Exit(0); // Выход
+                    break;
+                default:
+                    Console.ForegroundColor = ConsoleColor.Red;
+                    Console.WriteLine("Неверный выбор. Нажмите Enter для продолжения.");
+                    Console.ReadLine();
+                    break;
+            }
         }
         private static void ShowUserMenu() // меню для зарегистрированого пользователя
         {
+            Console.ForegroundColor= ConsoleColor.Green;
+            Console.WriteLine($"Вы вошли как: {currentUser.Username}");
+            Console.WriteLine("-----------------------------------");
+            Console.WriteLine("1. Просмотреть товары (и добавить в корзину)");
+            Console.WriteLine("2. Просмотреть мою корзину");
+            Console.WriteLine("3. Просмотреть историю моих заказов");
+            Console.WriteLine("9. Выйти из аккаунта");
+            Console.WriteLine("0. Выйти из программы");
+            Console.Write("Выберите действие: ");
 
-        }
+            string choice = Console.ReadLine();
+
+            switch (choice)
+            {
+                case "1":
+                    ViewProducts(); // Просмотр товаров
+                    break;
+                case "2":
+                    ViewCart(); // Просмотр корзины
+                    break;
+                case "3":
+                    ViewOrderHistory(); // Просмотр заказов
+                    break;
+                case "9":
+                    Logout(); // Выход из аккаунта
+                    break;
+                case "0":
+                    Environment.Exit(0); // Выход
+                    break;
+                default:
+                    Console.ForegroundColor = ConsoleColor.Red;
+                    Console.WriteLine("Неверный выбор. Нажмите Enter для продолжения.");
+                    Console.ReadLine();
+                    break;
+                }
+            }
         #endregion
+
+        private static string SimpleHash(string password)
+        {
+            // Просто "переворачиваем" пароль. "12345" -> "54321"
+            // Это ОЧЕНЬ небезопасно, но позволяет выполнить требование
+            // о том, что в БД пароль хранится не в чистом виде.
+            char[] charArray = password.ToCharArray();
+            Array.Reverse(charArray);
+            return new string(charArray);
+        }
 
         static void Main(string[] args)
         {
