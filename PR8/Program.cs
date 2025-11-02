@@ -120,15 +120,167 @@ namespace MarketPlace
         #region Методы просмотра товаров и корзины
         private static void ViewProducts() //метод просмотра товаров
         {
+            Console.Clear();
+            Console.ForegroundColor = ConsoleColor.Green;
+            Console.WriteLine("== Список доступных товаров ==");
 
+            var products = Core.Context.Products // Получаем товары из БД
+                .Where(p => p.StockQuantity > 0) // Показываем только то, что в наличии
+                .ToList();
+
+            if (!products.Any())
+            {
+                Console.WriteLine("Товаров в наличии нет.");
+                Console.ReadLine();
+            }
+
+            foreach (var p in products) // выводим список
+            {
+                Console.WriteLine($"[ID: {p.ProductID}] {p.Name} - {p.Price:C}");
+                Console.WriteLine($"    (Остаток: {p.StockQuantity} шт.) Описание: {p.Description}");
+                Console.WriteLine();
+            }
+
+            if (currentUser != null) //Если пользователь авторизован, предлагаем добавить в корзину
+            {
+                Console.WriteLine("-----------------------------------");
+                Console.Write("Введите ID товара для добавления в корзину (или 0 для возврата): ");
+                string choice = Console.ReadLine();
+
+                if (int.TryParse(choice, out int productID) && productID != 0)
+                {
+                    AddToCart(productID); // Вызываем метод добавления в корзину
+                }
+            }
+            else
+            {
+                Console.WriteLine("Войдите в аккаунт, чтобы добавлять товары в корзину.");
+                Console.ReadLine();
+            }
         }
-        private static void AddToCart() // метод добавления товара в корзину
+        private static void AddToCart(int productID) // метод добавления товара в корзину
         {
+            var product = Core.Context.Products.Find(productID); // Находим продукт в БД
 
+            if (product == null || product.StockQuantity <= 0) // Проверка, что такой товар есть и он в наличии
+            {
+                Console.ForegroundColor= ConsoleColor.Red;
+                Console.WriteLine("Такого товара нет или он закончился.");
+                Console.ReadLine();
+            }
+
+            Console.Write($"Введите количество (доступно: {product.StockQuantity}): "); // Запрос количества
+            if (!int.TryParse(Console.ReadLine(), out int quantity) || quantity <= 0) 
+            {
+                Console.ForegroundColor = ConsoleColor.Red;
+                Console.WriteLine("Неверное количество.");
+                Console.ReadLine();
+            }
+
+            if (quantity > product.StockQuantity) // Проверка остатка
+            {
+                Console.ForegroundColor = ConsoleColor.Red;
+                Console.WriteLine($"Ошибка: Недостаточно товара на складе (Остаток: {product.StockQuantity})");
+                Console.ReadLine();
+            }
+
+            var cart = Core.Context.Carts.FirstOrDefault(c => c.UserID == currentUser.UserID); // Находим CartID пользователя
+            if (cart == null)
+            {
+                // Этого не должно случиться, если мы создаем корзину при регистрации
+                Console.ForegroundColor = ConsoleColor.Red;
+                Console.WriteLine("Критическая ошибка: Корзина не найдена!");
+                Console.ReadLine();
+                return;
+            }
+
+            // Проверяем, есть ли уже этот товар в корзине
+            var cartItem = Core.Context.CartItems
+                .FirstOrDefault(ci => ci.CartID == cart.CartID && ci.ProductID == productID);
+
+            if (cartItem != null)
+            {
+                // Если да - обновить количество
+                cartItem.Quantity += quantity;
+            }
+            else
+            {
+                // Если нет - добавить новую запись
+                cartItem = new CartItems
+                {
+                    CartID = cart.CartID,
+                    ProductID = productID,
+                    Quantity = quantity
+                };
+                Core.Context.CartItems.Add(cartItem);
+            }
+
+            try
+            {
+                Core.Context.SaveChanges();
+                Console.ForegroundColor = ConsoleColor.Blue;
+                Console.WriteLine($"Товар '{product.Name}' (x{quantity}) добавлен в корзину.");
+            }
+            catch (Exception ex)
+            {
+                Console.ForegroundColor = ConsoleColor.Red;
+                Console.WriteLine($"Ошибка сохранения: {ex.Message}");
+            }
+
+            Console.ReadLine();
         }
         private static void ViewCart() // метод просмотры корзины
         {
+            Console.Clear();
+            Console.ForegroundColor = ConsoleColor.Blue;
+            Console.WriteLine("== Моя корзина ==");
 
+            // Находим CartID
+            var cart = Core.Context.Carts.FirstOrDefault(c => c.UserID == currentUser.UserID);
+
+            // Получаем содержимое корзины
+            var items = Core.Context.CartItems
+                .Where(ci => ci.CartID == cart.CartID)
+                .Include(ci => ci.Products) 
+                .ToList();
+
+            if (!items.Any())
+            {
+
+                Console.WriteLine("Ваша корзина пуста.");
+                Console.ReadLine();
+                return;
+            }
+
+            decimal totalPrice = 0;
+
+            // Выводим список
+            foreach (var item in items)
+            {
+                if (item.Products != null)
+                {
+                    decimal itemTotalPrice = item.Products.Price * item.Quantity;
+                    Console.WriteLine($"Товар: {item.Products.Name}");
+                    Console.WriteLine($"   Кол-во: {item.Quantity} x {item.Products.Price:C} = {itemTotalPrice:C}");
+                    totalPrice += itemTotalPrice;
+                }
+            }
+
+            // Выводим итог
+            Console.WriteLine("-----------------------------------");
+            Console.ForegroundColor = ConsoleColor.Green;
+            Console.WriteLine($"Итоговая сумма: {totalPrice:C}");
+            Console.WriteLine();
+
+            // Предлогаем оформить заказ
+            Console.Write("Хотите оформить заказ? (Да/Нет): ");
+            string choice = Console.ReadLine();
+
+            if (choice.Equals("Да", StringComparison.OrdinalIgnoreCase))
+            {
+                // Переход к оформлению заказа
+                CreateOrder(items, totalPrice);
+            }
         }
         #endregion
 
