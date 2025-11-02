@@ -570,9 +570,6 @@ namespace MarketPlace
 
         private static string SimpleHash(string password)
         {
-            // Просто "переворачиваем" пароль. "12345" -> "54321"
-            // Это ОЧЕНЬ небезопасно, но позволяет выполнить требование
-            // о том, что в БД пароль хранится не в чистом виде.
             char[] charArray = password.ToCharArray();
             Array.Reverse(charArray);
             return new string(charArray);
@@ -580,6 +577,7 @@ namespace MarketPlace
 
         static void Main(string[] args)
         {
+            MainLoop();
         }
     }
 }
