@@ -40,6 +40,21 @@ namespace MarketPlace
         }
         #endregion
 
+        #region Методы для Заказа
+        private static void CreateOrder() // оформление заказа
+        {
+
+        }
+        private static void ViewOrderHistory() // проосмотр истории заказов 
+        {
+
+        }
+        private static void ShowOrderDetails() // Метод для показа деталей конкретного заказа
+        {
+
+        }
+        #endregion
+
         static void Main(string[] args)
         {
         }
