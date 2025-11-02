@@ -55,6 +55,21 @@ namespace MarketPlace
         }
         #endregion
 
+        #region Главный метод вывода меню
+        private static void MainLoop() // вывод меню
+        {
+
+        }
+        private static void ShowGuestMenu() // меню для не зарегистрированого пользователя
+        {
+
+        }
+        private static void ShowUserMenu() // меню для зарегистрированого пользователя
+        {
+
+        }
+        #endregion
+
         static void Main(string[] args)
         {
         }
