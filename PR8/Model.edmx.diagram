@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx">
+ <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <edmx:Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
+    <!-- Diagram content (shape and connector positions) -->
+    <edmx:Diagrams>
+      <Diagram DiagramId="446c1c5723ac462c9d72de573eed76ac" Name="Diagram1">
+        <EntityTypeShape EntityType="MarketPlaceNagievModel.CartItems" Width="1.5" PointX="5.25" PointY="5.125" IsExpanded="true" />
+        <EntityTypeShape EntityType="MarketPlaceNagievModel.Carts" Width="1.5" PointX="3" PointY="5.25" IsExpanded="true" />
+        <EntityTypeShape EntityType="MarketPlaceNagievModel.OrderItems" Width="1.5" PointX="5.25" PointY="1" IsExpanded="true" />
+        <EntityTypeShape EntityType="MarketPlaceNagievModel.Orders" Width="1.5" PointX="3" PointY="0.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="MarketPlaceNagievModel.PickupPoints" Width="1.5" PointX="0.75" PointY="1.875" IsExpanded="true" />
+        <EntityTypeShape EntityType="MarketPlaceNagievModel.Products" Width="1.5" PointX="3" PointY="8.5" IsExpanded="true" />
+        <EntityTypeShape EntityType="MarketPlaceNagievModel.sysdiagrams" Width="1.5" PointX="5.75" PointY="8.875" IsExpanded="true" />
+        <EntityTypeShape EntityType="MarketPlaceNagievModel.Users" Width="1.5" PointX="0.75" PointY="5.125" IsExpanded="true" />
+        <AssociationConnector Association="MarketPlaceNagievModel.FK_CartItems_Carts" ManuallyRouted="false" />
+        <AssociationConnector Association="MarketPlaceNagievModel.FK_CartItems_Products" ManuallyRouted="false" />
+        <AssociationConnector Association="MarketPlaceNagievModel.FK_Carts_Users" ManuallyRouted="false" />
+        <AssociationConnector Association="MarketPlaceNagievModel.FK_OrderItems_Orders" ManuallyRouted="false" />
+        <AssociationConnector Association="MarketPlaceNagievModel.FK_OrderItems_Products" ManuallyRouted="false" />
+        <AssociationConnector Association="MarketPlaceNagievModel.FK_Orders_PickupPoints" ManuallyRouted="false" />
+        <AssociationConnector Association="MarketPlaceNagievModel.FK_Orders_Users" ManuallyRouted="false" />
+      </Diagram>
+    </edmx:Diagrams>
+  </edmx:Designer>
+</edmx:Edmx>
